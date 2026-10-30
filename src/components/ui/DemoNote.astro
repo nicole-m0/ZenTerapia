@@ -1,7 +1,7 @@
 ---
 /**
  * Marca visual de conteúdo demonstrativo (persona, relatos, formação, valores).
- * Um anel aberto em miniatura, o mesmo do símbolo, seguido de texto curto.
+ * Uma janela em miniatura, a mesma do símbolo, seguida de texto curto.
  * Sempre visível e legível: não é um rodapé escondido.
  */
 interface Props {
@@ -14,18 +14,17 @@ const { as: Tag = 'p' } = Astro.props;
 <Tag class="demo-note">
   <svg
     class="demo-note__mark"
-    width="14"
+    width="11"
     height="14"
-    viewBox="0 0 32 32"
+    viewBox="0 0 24 30"
     fill="none"
     aria-hidden="true"
     focusable="false"
   >
     <path
-      d="M25.53 10.5A11 11 0 1 1 21.5 6.47"
+      d="M1.6 1.6h20.8v26.8H1.6zM10.1 1.6v26.8M1.6 8.6h20.8"
       stroke="currentColor"
-      stroke-width="2.4"
-      stroke-linecap="round"
+      stroke-width="3.2"
     ></path>
   </svg>
   <span>

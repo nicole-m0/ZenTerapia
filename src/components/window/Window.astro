@@ -1,0 +1,165 @@
+---
+/**
+ * Janela: uma foto contínua vista através do caixilho.
+ * A foto fica atrás de uma grade de vidraças; cada vidraça desenha metade do
+ * montante ao seu redor e a sombra do batente sobre o vidro (a luz vem do alto,
+ * à direita, como nas projeções de LightCast). Quem usa define o tamanho.
+ * As proporções padrão (40/60 × 27/73) são as do símbolo da marca.
+ */
+import { Picture } from 'astro:assets';
+import type { Photo } from '@/data/images';
+import type { Locale } from '@/i18n/config';
+
+interface Props {
+  photo: Photo;
+  locale: Locale;
+  /** Larguras relativas das colunas de vidraças. */
+  cols?: number[];
+  /** Alturas relativas das linhas de vidraças. */
+  rows?: number[];
+  widths?: number[];
+  sizes: string;
+  /** Imagem principal da página: carrega antes e entra com revelação. */
+  eager?: boolean;
+  /** Peitoril sob a janela, com a sombra na parede. */
+  sill?: boolean;
+  /** Texto alternativo próprio; vazio quando a foto é decorativa. */
+  alt?: string;
+  class?: string;
+}
+
+const {
+  photo,
+  locale,
+  cols = [40, 60],
+  rows = [27, 73],
+  widths = [480, 720, 960, 1280],
+  sizes,
+  eager = false,
+  sill = false,
+  alt,
+  class: className,
+} = Astro.props;
+
+const toTrack = (values: number[]) => values.map((value) => `${value}fr`).join(' ');
+const paneCount = cols.length * rows.length;
+---
+
+<div
+  class:list={['window', { 'window--eager': eager, 'window--sill': sill }, className]}
+  style={`--window-cols: ${toTrack(cols)}; --window-rows: ${toTrack(rows)}`}
+>
+  <div class="window__glass">
+    <Picture
+      src={photo.src}
+      alt={alt ?? photo.alt[locale]}
+      widths={widths}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      style={photo.position ? `object-position: ${photo.position}` : undefined}
+    />
+  </div>
+  <div class="window__panes" aria-hidden="true">
+    {Array.from({ length: paneCount }, () => (
+      <span></span>
+    ))}
+  </div>
+  {sill && <span class="window__sill" aria-hidden="true"></span>}
+</div>
+
+<style>
+  .window {
+    position: relative;
+    background-color: var(--color-frame);
+  }
+
+  .window__glass,
+  .window__panes {
+    position: absolute;
+    inset: var(--bar);
+  }
+
+  .window__glass {
+    overflow: hidden;
+    background-color: var(--color-sage-100);
+  }
+
+  .window__glass :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .window__glass :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .window__panes {
+    display: grid;
+    grid-template-columns: var(--window-cols);
+    grid-template-rows: var(--window-rows);
+  }
+
+  .window__panes span {
+    box-shadow:
+      0 0 0 calc(var(--bar) / 2) var(--color-frame),
+      var(--shadow-reveal);
+  }
+
+  .window__sill {
+    position: absolute;
+    top: 100%;
+    left: calc(var(--bar) * -1.75);
+    right: calc(var(--bar) * -1.75);
+    height: calc(var(--bar) * 1.5);
+    background-color: var(--color-frame);
+    box-shadow: var(--shadow-wall);
+  }
+
+  /*
+   * Profundidade: a paisagem atrás do vidro se move um pouco mais devagar que o
+   * caixilho durante a rolagem. A primeira imagem da página ainda "acostuma os
+   * olhos à luz" ao carregar.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .window--eager .window__glass :global(img) {
+      animation: window-reveal 1.8s var(--ease-out) both;
+    }
+
+    @supports (animation-timeline: view()) {
+      .window__glass :global(img) {
+        height: 112%;
+        margin-top: -6%;
+        animation: window-depth linear both;
+        animation-timeline: view();
+      }
+
+      .window--eager .window__glass :global(img) {
+        animation:
+          window-reveal 1.8s var(--ease-out) both,
+          window-depth linear both;
+        animation-timeline: auto, view();
+      }
+    }
+  }
+
+  @keyframes window-reveal {
+    from {
+      scale: 1.08;
+      filter: brightness(1.25) saturate(0.7);
+    }
+  }
+
+  @keyframes window-depth {
+    from {
+      translate: 0 -4%;
+    }
+
+    to {
+      translate: 0 4%;
+    }
+  }
+</style>

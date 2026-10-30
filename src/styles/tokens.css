@@ -1,38 +1,43 @@
 /*
  * Terapia Zen — design tokens
  *
- * Conceito: "respiro". Superfícies frias e claras (papel, névoa, sálvia),
- * texto em verde quase preto e um único acento quente (argila) usado em detalhes.
+ * Conceito: "janela". A parede é o papel (quente e um pouco acinzentado), a luz que
+ * entra pela janela é mais clara que a parede, e o caixilho é um verde quase preto.
+ * Fotos aparecem através de vidraças; a luz se projeta no papel em paralelogramos.
+ * Um único acento quente (argila) aparece só em detalhes.
  *
  * Contraste WCAG medido (texto sobre fundo):
- *   ink   / paper  13.85  ·  ink   / mist  12.52  ·  ink   / sage-100 11.71
- *   moss  / paper  10.13  ·  stone / paper  5.99  ·  stone / mist      5.42
- *   stone / sage-100 5.06 ·  paper / moss  10.13  ·  paper / moss-hover 7.47
- *   clay  / paper   4.62  (só sobre paper)
- *   Superfície escura: paper / ink 13.85 · ink-muted / ink 7.00 · clay-light / ink 6.51
- *   Bordas de campo (UI, mín. 3:1): field / paper 3.65 · field / mist 3.30
- *   `line` (1.47) é decorativa: nunca usada como única pista de um controle.
+ *   ink   / paper 13.77 · stone / paper 5.88 · clay / paper 5.27
+ *   ink   / dim   11.50 · stone / dim   4.91 · stone / light 6.86 · clay / light 6.15
+ *   stone / mist   5.97
+ *   Superfície escura (frame): light 12.86 · paper 11.03 · ink-muted 6.41 · clay-light 5.83
+ *   Botão: light / moss-hover 9.30
+ *   Bordas de campo (UI, mín. 3:1): field / paper 3.53
+ *   `line` é decorativa: nunca usada como única pista de um controle.
  */
 
 :root {
   color-scheme: light;
 
   /* Cor: base */
-  --color-paper: #f4f3ee;
+  --color-paper: #e8e6df;
+  --color-light: #faf7ee;
+  --color-dim: #d3d4ca;
   --color-mist: #e2e9ea;
   --color-sage-100: #dce3d3;
   --color-sage-300: #b6c5ac;
-  --color-ink: #1d2721;
-  --color-moss: #2c3f33;
-  --color-moss-hover: #3a5443;
-  --color-stone: #585e57;
-  --color-line: #c9ccc2;
-  --color-field: #7a8077;
-  --color-clay: #a35a3f;
+  --color-ink: #151d18;
+  --color-frame: #22302a;
+  --color-moss: var(--color-frame);
+  --color-moss-hover: #33473c;
+  --color-stone: #51584f;
+  --color-line: #c4c4b9;
+  --color-field: #747a71;
+  --color-clay: #8f4a2f;
 
   /* Cor: superfície escura */
-  --color-ink-muted: #a7b2a4;
-  --color-ink-line: #3a463e;
+  --color-ink-muted: #a9b4a6;
+  --color-ink-line: #34443b;
   --color-clay-light: #d99a7f;
 
   /* Cor: papéis semânticos (redefinidos em .surface-dark) */
@@ -41,7 +46,18 @@
   --fg-muted: var(--color-stone);
   --rule: var(--color-line);
   --accent: var(--color-clay);
-  --focus: var(--color-moss);
+  --focus: var(--color-frame);
+
+  /* Janela: espessura do caixilho e ângulo da luz projetada (o mesmo em todo o site) */
+  --bar: clamp(0.5rem, 0.4rem + 0.45vw, 0.875rem);
+  --light-skew: -22deg;
+  --light-skew-floor: -40deg;
+  /* penumbra: a luz projetada nunca tem borda perfeitamente nítida */
+  --light-blur: 1.5px;
+  /* sombra do caixilho sobre a foto (profundidade do batente) e sobre a parede */
+  --shadow-reveal:
+    inset 0.5rem 0.75rem 1.25rem -0.5rem rgb(10 16 12 / 0.45), inset 0 0 0 1px rgb(10 16 12 / 0.35);
+  --shadow-wall: 0 2.5rem 3rem -2rem rgb(20 28 23 / 0.45);
 
   /* Tipografia (as famílias vêm da Fonts API: --font-display-family, --font-body-family) */
   --font-display: var(--font-display-family), 'Times New Roman', serif;
@@ -57,11 +73,16 @@
   --step-4: clamp(2.25rem, 1.7218rem + 2.2535vw, 3.75rem);
   --step-5: clamp(2.75rem, 1.8697rem + 3.7559vw, 5.25rem);
   --step-6: clamp(3.125rem, 1.5845rem + 6.5728vw, 7.5rem);
+  /* Títulos em caixa alta: seção (52 → 96px) e capa (62 → 132px) */
+  --step-caps: clamp(3.25rem, 2.28rem + 4.13vw, 6rem);
+  --step-hero: clamp(3.875rem, 2.334rem + 6.573vw, 8.25rem);
 
   --leading-tight: 1.04;
   --leading-snug: 1.2;
   --leading-body: 1.62;
   --tracking-display: -0.015em;
+  --tracking-caps: 0.004em;
+  --leading-caps: 0.88;
   --tracking-label: 0.14em;
   --measure: 62ch;
   --measure-narrow: 44ch;
@@ -85,8 +106,8 @@
   --header-height: 4.75rem;
 
   /* Forma */
-  --radius-xs: 2px;
-  --radius-s: 6px;
+  --radius-xs: 0;
+  --radius-s: 2px;
   --radius-pill: 999px;
   --border-hairline: 1px solid var(--rule);
 
@@ -96,6 +117,7 @@
   --duration-fast: 160ms;
   --duration-base: 320ms;
   --duration-slow: 700ms;
+  --duration-light: 1400ms;
 
   /* Camadas */
   --z-header: 50;
@@ -110,12 +132,12 @@
 
 /* Superfície escura (footer, faixas de destaque) */
 .surface-dark {
-  --bg: var(--color-ink);
-  --fg: var(--color-paper);
+  --bg: var(--color-frame);
+  --fg: var(--color-light);
   --fg-muted: var(--color-ink-muted);
   --rule: var(--color-ink-line);
   --accent: var(--color-clay-light);
-  --focus: var(--color-paper);
+  --focus: var(--color-light);
 
   background-color: var(--bg);
   color: var(--fg);

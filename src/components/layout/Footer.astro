@@ -73,12 +73,13 @@ const contacts = [
       </div>
     </div>
 
-    <div
-      class="site-footer__wordmark"
-      data-first={brandFirst}
-      data-rest={brandRest.join(' ')}
-      aria-hidden="true"
-    ></div>
+    <div class="site-footer__window" aria-hidden="true">
+      <div
+        class="site-footer__wordmark"
+        data-first={brandFirst}
+        data-rest={brandRest.join(' ')}
+      ></div>
+    </div>
 
     <div class="site-footer__legal">
       <p>
@@ -160,7 +161,7 @@ const contacts = [
   }
 
   .site-footer__link:hover {
-    color: var(--color-sage-300);
+    color: var(--color-clay-light);
   }
 
   .site-footer__link[aria-current='page'] {
@@ -191,11 +192,31 @@ const contacts = [
    * linha de base pousar no filete de baixo e os descendentes serem cortados por ele.
    * O texto vem de pseudo-elementos: é decoração, não conteúdo (WCAG 1.4.3, texto decorativo).
    */
+  /*
+   * O letreiro visto através de um caixilho: montantes na cor do rodapé cortam
+   * as letras nas mesmas proporções da janela da marca (40/60 e 27/73).
+   */
+  .site-footer__window {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: var(--space-3xl);
+  }
+
+  .site-footer__window::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(var(--bg), var(--bg)) 40% 0 / var(--bar) 100% no-repeat,
+      linear-gradient(var(--bg), var(--bg)) 0 27% / 100% var(--bar) no-repeat;
+    pointer-events: none;
+  }
+
   .site-footer__wordmark {
     box-sizing: border-box;
     height: 0.77em;
     max-width: none;
-    margin-top: var(--space-3xl);
     padding-top: 0.02em;
     overflow: hidden;
     font-family: var(--font-display);
@@ -205,6 +226,7 @@ const contacts = [
     white-space: nowrap;
     color: var(--color-ink-line);
     user-select: none;
+    text-transform: uppercase;
   }
 
   .site-footer__wordmark::before {

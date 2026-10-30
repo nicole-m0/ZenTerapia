@@ -1,12 +1,12 @@
 {
   "hero": {
     "eyebrow": "Integrative therapies · in person and online",
-    "title": "Care begins with a *pause*.",
+    "title": "Care|begins with|a *pause*.",
     "lead": "Somatic therapy, meditation, reiki and aromatherapy to slow down, listen to your body and find a rhythm that feels like your own.",
     "secondaryCta": {
       "label": "Explore the services"
     },
-    "caption": "A morning without hurry.",
+    "caption": "Light at 7:40 a.m.",
     "facts": ["One-to-one sessions", "50 to 80 minutes", "In person and online"]
   },
   "intro": {
@@ -23,8 +23,11 @@
   },
   "services": {
     "label": "Services",
-    "title": "Four paths to the *same* pause.",
-    "intro": "Each practice has its own pace. In our first conversation, we find the one that fits where you are right now.",
+    "title": "Four windows onto the *same* pause.",
+    "intro": "Each practice opens a different view. In our first conversation, we find the one that fits where you are right now.",
+    "swipeHint": "Swipe through the panes",
+    "previous": "Previous practice",
+    "next": "Next practice",
     "durationUnit": "min",
     "link": {
       "label": "Details and pricing"
@@ -32,7 +35,8 @@
   },
   "experience": {
     "label": "The session",
-    "title": "What a session *feels* like",
+    "title": "How light moves through a *session*",
+    "intro": "Four moments, from arriving to heading home. No hurry and no set formula.",
     "steps": [
       {
         "title": "Arriving",

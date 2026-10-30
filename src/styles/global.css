@@ -99,12 +99,24 @@ h3,
   text-wrap: balance;
 }
 
+/*
+ * Títulos de página e de seção em caixa alta, apertados como letreiro pintado
+ * no vidro. O itálico (`*palavra*` no conteúdo) continua sendo o único destaque.
+ */
+h1,
+h2,
+.caps {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  line-height: var(--leading-caps);
+}
+
 h1 {
-  font-size: var(--step-5);
+  font-size: var(--step-hero);
 }
 
 h2 {
-  font-size: var(--step-4);
+  font-size: var(--step-caps);
 }
 
 h3 {
@@ -149,7 +161,7 @@ a {
 }
 
 ::selection {
-  background-color: var(--color-sage-300);
+  background-color: var(--color-light);
   color: var(--color-ink);
 }
 
@@ -162,6 +174,16 @@ a {
 }
 
 /* ---------- Utilitários ---------- */
+
+/*
+ * Luz projetada: paralelogramo mais claro que a parede, com penumbra.
+ * Quem usa define posição e tamanho; o ângulo é o mesmo em todo o site.
+ */
+.light-patch {
+  background-color: var(--color-light);
+  transform: skewX(var(--light-skew));
+  filter: blur(var(--light-blur));
+}
 
 /*
  * Moldura de foto: a imagem preenche a caixa (proporção definida por quem usa).
@@ -208,10 +230,9 @@ a {
   left: var(--space-2xs);
   z-index: calc(var(--z-grain) + 1);
   padding: var(--space-2xs) var(--space-s);
-  background-color: var(--color-ink);
-  color: var(--color-paper);
+  background-color: var(--color-frame);
+  color: var(--color-light);
   font-size: var(--step--1);
-  border-radius: var(--radius-pill);
   transform: translateY(-200%);
 }
 

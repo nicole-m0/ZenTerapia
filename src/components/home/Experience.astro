@@ -1,4 +1,10 @@
 ---
+/**
+ * A sessão em quatro momentos, como manchas de luz sobre um piso escuro.
+ * Cada momento é uma vidraça projetada, no mesmo ângulo do resto do site;
+ * ao rolar, as manchas chegam na direção da luz (do alto, à direita).
+ * A segunda mancha é mais fraca, como luz atravessando uma nuvem.
+ */
 import { Picture } from 'astro:assets';
 import Emphasis from '@/components/ui/Emphasis.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
@@ -13,115 +19,238 @@ interface Props {
 
 const { locale, content } = Astro.props;
 const photo = images.experiencia;
+const numerals = ['i.', 'ii.', 'iii.', 'iv.'];
 ---
 
-<section class="experience surface-mist" aria-labelledby="experience-title">
-  <div class="container experience__grid">
-    <div class="experience__media media-frame">
-      <Picture
-        src={photo.src}
-        alt={photo.alt[locale]}
-        widths={[480, 720, 960, 1200]}
-        sizes="(min-width: 60rem) 38vw, 100vw"
-        formats={['avif', 'webp']}
-      />
-    </div>
+<section class="session surface-dark" aria-labelledby="session-title">
+  <div class="container">
+    <header class="session__head">
+      <div class="session__heading">
+        <SectionLabel number="03">{content.label}</SectionLabel>
+        <h2 id="session-title">
+          <Emphasis text={content.title} />
+        </h2>
+      </div>
+      <p class="session__intro">{content.intro}</p>
+    </header>
 
-    <div class="experience__content">
-      <SectionLabel number="03">{content.label}</SectionLabel>
-      <h2 id="experience-title">
-        <Emphasis text={content.title} />
-      </h2>
-      <ol class="steps" role="list">
-        {content.steps.map((step, index) => (
-          <li class="step">
-            <span class="step__number" aria-hidden="true">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <h3 class="step__title">{step.title}</h3>
-            <p class="step__text">{step.text}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <ol class="session__steps" role="list">
+      {content.steps.map((step, index) => (
+        <li class:list={['patch', `patch--${index + 1}`]}>
+          {index === 2 && (
+            <div class="patch__photo">
+              <Picture
+                src={photo.src}
+                alt={photo.alt[locale]}
+                widths={[480, 720, 960]}
+                sizes="(min-width: 60rem) 34vw, 86vw"
+                formats={['avif', 'webp']}
+              />
+            </div>
+          )}
+          <span class="patch__number" aria-hidden="true">
+            {numerals[index]}
+          </span>
+          <h3 class="patch__title">{step.title}</h3>
+          <p class="patch__text">{step.text}</p>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
 <style>
-  .experience {
+  .session {
     padding-block: var(--space-section);
+    overflow: clip;
   }
 
-  .experience__grid {
-    display: grid;
-    gap: var(--space-2xl);
-  }
-
-  .experience__media {
-    aspect-ratio: 4 / 3;
-  }
-
-  .experience__content {
+  .session__head {
     display: grid;
     gap: var(--space-m);
-    align-content: start;
+    margin-bottom: var(--space-2xl);
   }
 
-  .steps {
-    margin-top: var(--space-l);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
-  }
-
-  .step {
+  .session__heading {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    column-gap: var(--space-s);
-    row-gap: 0.375rem;
-    padding-block: var(--space-m);
-    border-top: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+    gap: var(--space-m);
   }
 
-  .step__number {
-    grid-row: span 2;
+  .session__intro {
+    max-width: 36ch;
+    color: var(--fg-muted);
+  }
+
+  .session__steps {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  /*
+   * Mancha de luz: o fundo é um paralelogramo (inclinado no ângulo da luz),
+   * o texto continua reto. O recuo lateral cobre a inclinação nas pontas.
+   */
+  .patch {
+    --patch-bg: var(--color-light);
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-content: start;
+    gap: 0.375rem;
+    padding: var(--space-m) calc(var(--space-l) + 1rem) var(--space-m) calc(var(--space-l) + 1.5rem);
+    color: var(--color-ink);
+  }
+
+  .patch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--patch-bg);
+    transform: skewX(var(--light-skew));
+    filter: blur(0.6px);
+  }
+
+  .patch--2 {
+    --patch-bg: var(--color-dim);
+  }
+
+  /* celular: as manchas se alternam pela largura, como luz caindo em degraus */
+  .patch:nth-child(odd) {
+    margin-inline-end: 1.75rem;
+  }
+
+  .patch:nth-child(even) {
+    margin-inline-start: 1.75rem;
+  }
+
+  /* a foto é uma vidraça menor dentro da mancha, inclinada no mesmo ângulo */
+  .patch__photo {
+    position: relative;
+    height: 10rem;
+    margin: 0 0 var(--space-s) 1.5rem;
+    overflow: hidden;
+    transform: skewX(var(--light-skew));
+  }
+
+  /* a foto é recortada pela mancha, mas não fica inclinada */
+  .patch__photo :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .patch__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: skewX(calc(var(--light-skew) * -1)) scale(1.35);
+  }
+
+  .patch__number {
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: var(--step-1);
     font-style: italic;
     line-height: 1;
-    color: var(--accent);
+    color: var(--color-clay);
   }
 
-  .step__title {
-    font-size: var(--step-2);
+  .patch__title {
+    font-size: var(--step-3);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
   }
 
-  .step__text {
-    color: var(--fg-muted);
-    max-width: 44ch;
+  .patch__text {
+    max-width: 30ch;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--color-stone);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .patch {
+        animation: patch-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 80%;
+      }
+    }
+  }
+
+  /* a mancha chega na direção da luz: do alto, à direita */
+  @keyframes patch-in {
+    from {
+      opacity: 0;
+      translate: 3rem -1.5rem;
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .patch:nth-child(odd) {
+      margin-inline-end: 30%;
+    }
+
+    .patch:nth-child(even) {
+      margin-inline-start: 30%;
+    }
   }
 
   @media (min-width: 60rem) {
-    .experience__grid {
+    .session__head {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: var(--grid-gap);
+      align-items: end;
+      margin-bottom: var(--space-3xl);
+    }
+
+    .session__heading {
+      grid-column: 1 / span 8;
+    }
+
+    .session__intro {
+      grid-column: 9 / span 4;
+    }
+
+    /* composição livre sobre a grade: as manchas caem em alturas diferentes */
+    .session__steps {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      row-gap: 0;
       align-items: start;
     }
 
-    /* foto vertical e fixa enquanto os quatro momentos passam ao lado */
-    .experience__media {
-      position: sticky;
-      top: calc(var(--header-height) + var(--space-l));
-      grid-column: 1 / span 5;
-      aspect-ratio: 4 / 5;
+    .patch:nth-child(n) {
+      margin: 0;
     }
 
-    .experience__content {
-      grid-column: 7 / span 6;
-      padding-top: var(--space-xl);
+    .patch.patch--1 {
+      grid-column: 1 / span 4;
+      grid-row: 1;
+      margin-inline-start: 4.5rem;
     }
 
-    .step {
-      grid-template-columns: 4.5rem minmax(0, 1fr);
-      padding-block: var(--space-l);
+    .patch.patch--2 {
+      grid-column: 5 / span 3;
+      grid-row: 1;
+      margin: 7rem 0 0 1.5rem;
+    }
+
+    .patch.patch--3 {
+      grid-column: 8 / span 5;
+      grid-row: 1 / span 2;
+      margin: 3rem 3.5rem 0 2.5rem;
+    }
+
+    .patch.patch--4 {
+      grid-column: 2 / span 4;
+      grid-row: 2;
+      margin-top: 3rem;
+    }
+
+    .patch__photo {
+      height: 13rem;
     }
   }
 </style>

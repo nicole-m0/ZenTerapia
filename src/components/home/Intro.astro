@@ -1,9 +1,15 @@
 ---
-import { Picture } from 'astro:assets';
+/**
+ * Abordagem: uma janela estreita de duas folhas (a cortina), à direita, e a luz
+ * dela caindo para a esquerda (o ângulo comum do site) sobre o texto em que a
+ * terapeuta se apresenta.
+ */
 import DemoNote from '@/components/ui/DemoNote.astro';
 import Emphasis from '@/components/ui/Emphasis.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
 import TextLink from '@/components/ui/TextLink.astro';
+import LightCast from '@/components/window/LightCast.astro';
+import Window from '@/components/window/Window.astro';
 import { images } from '@/data/images';
 import type { Locale } from '@/i18n/config';
 import { getLocalizedPath } from '@/i18n/utils';
@@ -15,71 +21,103 @@ interface Props {
 }
 
 const { locale, content } = Astro.props;
-const photo = images.cortina;
 ---
 
-<section class="intro container" aria-labelledby="intro-title">
-  <div class="intro__label">
-    <SectionLabel number="01">{content.label}</SectionLabel>
-  </div>
-  <h2 id="intro-title" class="intro__statement">
-    <Emphasis text={content.statement} />
-  </h2>
+<section class="intro" aria-labelledby="intro-title">
+  <div class="container intro__inner">
+    <div class="intro__label">
+      <SectionLabel number="01">{content.label}</SectionLabel>
+    </div>
+    <h2 id="intro-title" class="intro__statement">
+      <Emphasis text={content.statement} />
+    </h2>
 
-  <div class="intro__media media-frame">
-    <Picture
-      src={photo.src}
-      alt={photo.alt[locale]}
+    <Window
+      class="intro__window"
+      photo={images.cortina}
+      locale={locale}
+      cols={[1, 1]}
+      rows={[22, 78]}
       widths={[400, 640, 900]}
-      sizes="(min-width: 60rem) 28vw, 64vw"
-      formats={['avif', 'webp']}
+      sizes="(min-width: 60rem) 30vw, 60vw"
+      sill
     />
-  </div>
 
-  <div class="intro__body">
-    {content.body.map((paragraph) => (
-      <p>{paragraph}</p>
-    ))}
-    <DemoNote>{content.demoNote}</DemoNote>
-    <TextLink href={getLocalizedPath('about', locale)} arrow>
-      {content.link.label}
-    </TextLink>
+    <div class="intro__body">
+      <LightCast class="intro__light" cols={[1, 1]} rows={[22, 78]} />
+      {content.body.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+      <DemoNote>{content.demoNote}</DemoNote>
+      <TextLink href={getLocalizedPath('about', locale)} arrow>
+        {content.link.label}
+      </TextLink>
+    </div>
   </div>
 </section>
 
 <style>
   .intro {
+    overflow: clip;
+  }
+
+  .intro__inner {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-l);
-    padding-block: var(--space-3xl) var(--space-section);
+    padding-block: var(--space-section);
   }
 
+  /* frase de abertura: serifada em caixa normal, para ser lida como fala */
   .intro__statement {
     font-size: clamp(1.875rem, 1.35rem + 2.25vw, 3.375rem);
     line-height: 1.08;
+    letter-spacing: var(--tracking-display);
+    text-transform: none;
     max-width: 24ch;
   }
 
-  .intro__media {
-    width: 64%;
-    aspect-ratio: 3 / 4;
-    margin-top: var(--space-l);
+  .intro__inner :global(.intro__window) {
+    width: 62%;
+    aspect-ratio: 3 / 4.4;
+    margin-top: var(--space-m);
+    margin-inline-start: auto;
   }
 
   .intro__body {
+    position: relative;
     display: grid;
     justify-items: start;
     gap: var(--space-s);
+    margin-top: var(--space-l);
     color: var(--fg-muted);
+  }
+
+  .intro__body > :global(:not(.intro__light)) {
+    position: relative;
+  }
+
+  .intro__body :global(.intro__light) {
+    position: absolute;
+    top: -2rem;
+    left: 6%;
+    width: 72%;
+    height: calc(100% + 3rem);
+    opacity: 0.85;
   }
 
   .intro__body :global(.text-link) {
     margin-top: var(--space-xs);
   }
 
+  @media (min-width: 40rem) {
+    .intro__inner :global(.intro__window) {
+      width: 46%;
+    }
+  }
+
   @media (min-width: 60rem) {
-    .intro {
+    .intro__inner {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: var(--grid-gap);
       row-gap: var(--space-2xl);
@@ -94,17 +132,27 @@ const photo = images.cortina;
       grid-column: 4 / -1;
     }
 
-    .intro__media {
-      grid-column: 2 / span 4;
+    .intro__inner :global(.intro__window) {
+      grid-column: 8 / span 4;
+      grid-row: 2;
       width: auto;
-      margin-top: 0;
+      margin: 0;
     }
 
-    /* o texto desce até a base da foto: leitura em diagonal pela página */
+    /* o texto desce até a base da janela, onde a luz dela pousa */
     .intro__body {
-      grid-column: 7 / span 5;
+      grid-column: 3 / span 4;
+      grid-row: 2;
       align-self: end;
       max-width: 40ch;
+      margin: 0 0 var(--space-m);
+    }
+
+    .intro__body :global(.intro__light) {
+      top: -5rem;
+      left: 18%;
+      width: 82%;
+      height: calc(100% + 7rem);
     }
   }
 </style>

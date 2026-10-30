@@ -1,0 +1,96 @@
+---
+/**
+ * Luz projetada: a sombra de uma janela na parede ou no piso.
+ * Usa as mesmas proporções da Window que a origina, inclinada no ângulo
+ * comum do site; os montantes projetados saem um pouco mais largos e a luz
+ * enfraquece à medida que se afasta da janela (canto inferior esquerdo).
+ * Decorativa. Quem usa define posição e tamanho.
+ */
+interface Props {
+  cols?: number[];
+  rows?: number[];
+  /** `wall` (padrão) ou `floor`, que deita mais a projeção. */
+  surface?: 'wall' | 'floor';
+  /** `load`: acende ao abrir a página. `scroll`: a luz caminha com a rolagem. */
+  motion?: 'load' | 'scroll' | 'none';
+  class?: string;
+}
+
+const {
+  cols = [40, 60],
+  rows = [27, 73],
+  surface = 'wall',
+  motion = 'scroll',
+  class: className,
+} = Astro.props;
+
+const toTrack = (values: number[]) => values.map((value) => `${value}fr`).join(' ');
+const paneCount = cols.length * rows.length;
+---
+
+<div
+  class:list={['light-cast', `light-cast--${surface}`, `light-cast--${motion}`, className]}
+  style={`--cast-cols: ${toTrack(cols)}; --cast-rows: ${toTrack(rows)}`}
+  aria-hidden="true"
+>
+  {Array.from({ length: paneCount }, () => (
+    <span></span>
+  ))}
+</div>
+
+<style>
+  .light-cast {
+    --cast-skew: var(--light-skew);
+
+    display: grid;
+    grid-template-columns: var(--cast-cols);
+    grid-template-rows: var(--cast-rows);
+    gap: calc(var(--bar) * 1.35);
+    pointer-events: none;
+    transform: skewX(var(--cast-skew));
+    filter: blur(var(--light-blur));
+    mask-image: linear-gradient(to bottom left, #000 35%, rgb(0 0 0 / 0.45));
+  }
+
+  .light-cast--floor {
+    --cast-skew: var(--light-skew-floor);
+  }
+
+  .light-cast span {
+    background-color: var(--color-light);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .light-cast--load {
+      animation: light-on var(--duration-light) var(--ease-out) 300ms both;
+    }
+
+    /* a luz da tarde caminha: desliza e deita um pouco enquanto a seção passa */
+    @supports (animation-timeline: view()) {
+      .light-cast--scroll {
+        animation: light-walk linear both;
+        animation-timeline: view();
+        animation-range: entry 10% exit 90%;
+      }
+    }
+  }
+
+  @keyframes light-on {
+    from {
+      opacity: 0;
+      translate: 2rem -1.25rem;
+    }
+  }
+
+  @keyframes light-walk {
+    from {
+      translate: 3rem -1rem;
+      transform: skewX(calc(var(--cast-skew) + 6deg));
+    }
+
+    to {
+      translate: -2rem 1rem;
+      transform: skewX(calc(var(--cast-skew) - 6deg));
+    }
+  }
+</style>

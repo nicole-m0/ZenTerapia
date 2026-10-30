@@ -1,8 +1,12 @@
 ---
-import BreathRing from '@/components/brand/BreathRing.astro';
+/**
+ * Fechamento: a mesma janela da capa, agora só como luz de fim de tarde na
+ * parede. O convite fica escrito dentro da projeção, que caminha com a rolagem.
+ */
 import Button from '@/components/ui/Button.astro';
 import Emphasis from '@/components/ui/Emphasis.astro';
 import TextLink from '@/components/ui/TextLink.astro';
+import LightCast from '@/components/window/LightCast.astro';
 import { site } from '@/data/site';
 import type { Locale } from '@/i18n/config';
 import { getLocalizedPath, useTranslations } from '@/i18n/utils';
@@ -17,11 +21,9 @@ const { locale, content } = Astro.props;
 const t = useTranslations(locale);
 ---
 
-<section class="closing surface-sage" aria-labelledby="closing-title">
+<section class="closing" aria-labelledby="closing-title">
   <div class="container closing__inner">
-    <div class="closing__ring">
-      <BreathRing />
-    </div>
+    <LightCast class="closing__light" />
     <h2 id="closing-title" class="closing__title">
       <Emphasis text={content.title} />
     </h2>
@@ -39,7 +41,7 @@ const t = useTranslations(locale);
 
 <style>
   .closing {
-    overflow: hidden;
+    overflow: clip;
   }
 
   .closing__inner {
@@ -51,29 +53,30 @@ const t = useTranslations(locale);
     text-align: center;
   }
 
-  /* o anel envolve o título, como uma respiração em volta da frase */
-  .closing__ring {
+  .closing__inner > :not(:first-child) {
+    position: relative;
+  }
+
+  .closing__inner :global(.closing__light) {
+    /* centralizada sem translate: a propriedade é da animação da luz */
     position: absolute;
-    top: 50%;
+    top: 9%;
     left: 50%;
-    width: min(44rem, 118vw);
-    translate: -50% -50%;
+    width: min(52rem, 104%);
+    height: 82%;
+    margin-inline-start: calc(min(52rem, 104%) / -2);
   }
 
   .closing__title {
-    position: relative;
-    font-size: var(--step-5);
-    max-width: 12ch;
+    max-width: 11ch;
   }
 
   .closing__text {
-    position: relative;
-    max-width: 40ch;
+    max-width: 38ch;
     color: var(--fg-muted);
   }
 
   .closing__actions {
-    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

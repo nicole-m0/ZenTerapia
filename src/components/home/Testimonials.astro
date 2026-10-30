@@ -1,4 +1,9 @@
 ---
+/**
+ * Relatos escritos em vidraças de vidro jateado: uma janela de três folhas,
+ * a maior para o relato principal. O aviso de conteúdo fictício fica visível
+ * no cabeçalho e em cada relato.
+ */
 import DemoNote from '@/components/ui/DemoNote.astro';
 import Emphasis from '@/components/ui/Emphasis.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
@@ -12,32 +17,33 @@ interface Props {
 const { content, testimonials } = Astro.props;
 ---
 
-<section class="testimonials container" aria-labelledby="testimonials-title">
-  <header class="testimonials__head">
-    <div class="testimonials__heading">
+<section class="testimonials" aria-labelledby="testimonials-title">
+  <div class="container">
+    <header class="testimonials__head">
       <SectionLabel number="04">{content.label}</SectionLabel>
       <h2 id="testimonials-title">
         <Emphasis text={content.title} />
       </h2>
       <DemoNote>{content.disclaimer}</DemoNote>
-    </div>
-  </header>
+    </header>
 
-  <div class="testimonials__grid">
-    {testimonials.map((item, index) => (
-      <figure class:list={['quote', index === 0 ? 'quote--lead' : 'quote--minor']}>
-        <blockquote>
-          <p>{item.quote}</p>
-        </blockquote>
-        <figcaption>
-          <span class="quote__name">{item.name}</span>
-          <span class="quote__detail">{item.detail}</span>
-          <span class="quote__demo">
-            <DemoNote as="span">{content.itemNote}</DemoNote>
-          </span>
-        </figcaption>
-      </figure>
-    ))}
+    <div class="testimonials__window">
+      {testimonials.map((item, index) => (
+        <figure class:list={['quote', index === 0 ? 'quote--lead' : 'quote--minor']}>
+          <blockquote>
+            <p>{item.quote}</p>
+          </blockquote>
+          <figcaption>
+            <span class="quote__name">{item.name}</span>
+            <span class="quote__detail">{item.detail}</span>
+            <span class="quote__demo">
+              <DemoNote as="span">{content.itemNote}</DemoNote>
+            </span>
+          </figcaption>
+        </figure>
+      ))}
+      <span class="testimonials__sill" aria-hidden="true"></span>
+    </div>
   </div>
 </section>
 
@@ -48,29 +54,45 @@ const { content, testimonials } = Astro.props;
 
   .testimonials__head {
     display: grid;
+    justify-items: start;
     gap: var(--space-m);
     margin-bottom: var(--space-2xl);
   }
 
-  .testimonials__heading {
+  .testimonials__head h2 {
+    max-width: 12ch;
+  }
+
+  /* a janela: caixilho como fundo, as vidraças separadas pelo vão do montante */
+  .testimonials__window {
+    position: relative;
     display: grid;
-    gap: var(--space-m);
+    gap: var(--bar);
+    padding: var(--bar);
+    margin-bottom: calc(var(--bar) * 1.5);
+    background-color: var(--color-frame);
   }
 
-  .quote__demo {
-    flex-basis: 100%;
+  .testimonials__sill {
+    position: absolute;
+    top: 100%;
+    left: calc(var(--bar) * -1.75);
+    right: calc(var(--bar) * -1.75);
+    height: calc(var(--bar) * 1.5);
+    background-color: var(--color-frame);
+    box-shadow: var(--shadow-wall);
   }
 
-  .testimonials__grid {
-    display: grid;
-    gap: var(--space-2xl);
-  }
-
+  /* vidro jateado: mais claro onde a luz bate (alto, à direita) */
   .quote {
+    position: relative;
     display: grid;
-    align-content: start;
-    align-self: start;
-    gap: var(--space-s);
+    align-content: space-between;
+    gap: var(--space-l);
+    padding: var(--space-l) var(--space-m) var(--space-m);
+    background: linear-gradient(200deg, var(--color-light) 30%, #efede4);
+    box-shadow: var(--shadow-reveal);
+    transition: background-color var(--duration-slow) var(--ease-out);
   }
 
   .quote blockquote p {
@@ -80,18 +102,18 @@ const { content, testimonials } = Astro.props;
   }
 
   .quote--lead blockquote p {
-    position: relative;
     font-size: var(--step-3);
-    line-height: 1.15;
-    max-width: 26ch;
+    line-height: 1.12;
+    max-width: 22ch;
   }
 
-  /* aspas de abertura penduradas na margem, em argila */
+  /* aspas de abertura em argila, grandes, na quina da vidraça */
   .quote--lead blockquote p::before {
     content: '“';
-    position: absolute;
-    right: 100%;
-    margin-right: 0.08em;
+    display: block;
+    height: 0.5em;
+    font-size: 2.2em;
+    line-height: 1;
     color: var(--accent);
   }
 
@@ -109,6 +131,10 @@ const { content, testimonials } = Astro.props;
     font-size: var(--step--1);
   }
 
+  .quote__name {
+    font-weight: 500;
+  }
+
   .quote__detail {
     color: var(--fg-muted);
   }
@@ -120,14 +146,17 @@ const { content, testimonials } = Astro.props;
     height: 1px;
     margin-right: 0.75rem;
     vertical-align: middle;
-    background-color: var(--rule);
+    background-color: currentColor;
   }
 
-  /* no celular as aspas penduradas sairiam da tela: ficam alinhadas ao texto */
-  @media (max-width: 39.99rem) {
-    .quote--lead blockquote p::before {
-      position: static;
-      margin-right: 0.05em;
+  .quote__demo {
+    flex-basis: 100%;
+    margin-top: 0.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .quote {
+      padding: var(--space-xl) var(--space-l) var(--space-l);
     }
   }
 
@@ -138,28 +167,31 @@ const { content, testimonials } = Astro.props;
       align-items: end;
     }
 
-    .testimonials__heading {
+    .testimonials__head :global(.section-label) {
+      grid-column: 1 / -1;
+    }
+
+    .testimonials__head h2 {
       grid-column: 1 / span 7;
     }
 
-    .testimonials__grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: var(--grid-gap);
-      row-gap: var(--space-2xl);
+    .testimonials__head :global(.demo-note) {
+      grid-column: 9 / span 4;
+    }
+
+    /* janela de três folhas: a principal ocupa a altura toda */
+    .testimonials__window {
+      grid-template-columns: 7fr 5fr;
+      grid-template-rows: auto auto;
     }
 
     .quote--lead {
-      grid-column: 2 / span 9;
+      grid-row: span 2;
+      padding: var(--space-2xl) var(--space-2xl) var(--space-xl);
     }
 
-    /* relatos menores escalonados: ritmo de página de revista, não grade */
-    .quote--minor:nth-child(2) {
-      grid-column: 4 / span 4;
-    }
-
-    .quote--minor:nth-child(3) {
-      grid-column: 9 / span 4;
-      margin-top: var(--space-3xl);
+    .quote--minor {
+      padding: var(--space-xl) var(--space-xl) var(--space-l);
     }
   }
 </style>

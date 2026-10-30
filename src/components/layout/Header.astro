@@ -43,7 +43,7 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
       <div class="site-header__lang">
         <LanguageSwitcher locale={locale} route={route} />
       </div>
-      <Button href={getLocalizedPath('contact', locale)} size="sm">
+      <Button href={getLocalizedPath('contact', locale)} size="sm" arrow>
         <span class="label-long">{t.nav.book}</span>
         <span class="label-short">{t.nav.bookShort}</span>
       </Button>
@@ -57,7 +57,7 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    background-color: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid transparent;
   }
@@ -72,7 +72,7 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
 
     @keyframes header-rule {
       to {
-        border-bottom-color: var(--color-line);
+        border-bottom-color: color-mix(in srgb, var(--color-frame) 22%, transparent);
       }
     }
   }
@@ -114,17 +114,37 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
     color: var(--fg);
   }
 
-  /* Página atual: o mesmo ponto em argila do símbolo da marca */
-  .site-header__nav a[aria-current='page']::after {
+  /*
+   * Hover: um filete de caixilho se desenha sob o item. Página atual: o filete
+   * fica, com a pequena vidraça acesa (argila) do símbolo da marca na ponta.
+   */
+  .site-header__nav a::after {
     content: '';
     position: absolute;
-    left: 50%;
-    bottom: 0.125rem;
-    width: 0.3125rem;
-    height: 0.3125rem;
-    border-radius: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0.25rem;
+    height: 2px;
+    background-color: var(--color-frame);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .site-header__nav a:hover::after,
+  .site-header__nav a[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .site-header__nav a[aria-current='page']::before {
+    content: '';
+    position: absolute;
+    right: -0.625rem;
+    bottom: 0.25rem;
+    width: 0.375rem;
+    height: 0.375rem;
     background-color: var(--accent);
-    translate: -50% 0;
   }
 
   .site-header__actions {

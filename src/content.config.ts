@@ -41,6 +41,7 @@ const home = defineCollection({
   schema: z.object({
     hero: z.object({
       eyebrow: z.string(),
+      /** `|` separa as linhas do título; a segunda linha entra recuada. */
       title: z.string(),
       lead: z.string(),
       secondaryCta: cta,
@@ -60,11 +61,16 @@ const home = defineCollection({
       title: z.string(),
       intro: z.string(),
       durationUnit: z.string(),
+      /** Dica e rótulos dos controles das vidraças deslizantes (telas menores). */
+      swipeHint: z.string(),
+      previous: z.string(),
+      next: z.string(),
       link: cta,
     }),
     experience: z.object({
       label: z.string(),
       title: z.string(),
+      intro: z.string(),
       steps: z.array(z.object({ title: z.string(), text: z.string() })).length(4),
     }),
     testimonials: z.object({

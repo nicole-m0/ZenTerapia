@@ -1,4 +1,9 @@
 ---
+/**
+ * Botão em vidraças: com `arrow`, o rótulo e a seta ocupam duas vidraças
+ * separadas por um montante na cor da parede. No hover, uma faixa de luz
+ * atravessa o vidro no mesmo ângulo da luz projetada no resto do site.
+ */
 import Icon from './Icon.astro';
 
 interface Props {
@@ -7,7 +12,7 @@ interface Props {
   type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary';
   size?: 'md' | 'sm';
-  /** Seta que avança no hover. */
+  /** Seta numa segunda vidraça, que avança no hover. */
   arrow?: boolean;
   fullWidth?: boolean;
   class?: string;
@@ -27,7 +32,7 @@ const classes = [
   'button',
   `button--${variant}`,
   `button--${size}`,
-  { 'button--full': fullWidth },
+  { 'button--arrow': arrow, 'button--full': fullWidth },
   className,
 ];
 ---
@@ -37,32 +42,40 @@ const classes = [
     <span class="button__label">
       <slot />
     </span>
-    {arrow && <Icon name="arrow-right" class="button__arrow" />}
+    {arrow && (
+      <span class="button__pane" aria-hidden="true">
+        <Icon name="arrow-right" size={18} class="button__arrow" />
+      </span>
+    )}
   </a>
 ) : (
   <button type={type} class:list={classes}>
     <span class="button__label">
       <slot />
     </span>
-    {arrow && <Icon name="arrow-right" class="button__arrow" />}
+    {arrow && (
+      <span class="button__pane" aria-hidden="true">
+        <Icon name="arrow-right" size={18} class="button__arrow" />
+      </span>
+    )}
   </button>
 )}
 
 <style>
   .button {
-    --button-bg: transparent;
-    --button-fg: var(--fg);
-    --button-border: currentColor;
+    --button-bg: var(--color-frame);
+    --button-bg-hover: var(--color-moss-hover);
+    --button-fg: var(--color-light);
+    --button-height: 3.25rem;
 
+    position: relative;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.625rem;
-    min-height: 3rem;
-    padding: 0.75rem 1.625rem;
-    border: 1px solid var(--button-border);
-    border-radius: var(--radius-pill);
-    background-color: var(--button-bg);
+    align-items: stretch;
+    min-height: var(--button-height);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
     color: var(--button-fg);
     font-family: var(--font-body);
     font-size: var(--step--1);
@@ -71,54 +84,126 @@ const classes = [
     letter-spacing: 0.01em;
     text-decoration: none;
     white-space: nowrap;
-    transition:
-      background-color var(--duration-base) var(--ease-out),
-      border-color var(--duration-base) var(--ease-out),
-      color var(--duration-base) var(--ease-out);
+  }
+
+  .button__label,
+  .button__pane {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--button-bg);
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
+
+  .button__label {
+    flex: 1;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .button__pane {
+    justify-content: center;
+    width: var(--button-height);
+    flex-shrink: 0;
+    /* montante entre as vidraças: a parede aparece no vão */
+    margin-inline-start: 2px;
+  }
+
+  /* faixa de luz que atravessa a vidraça do rótulo */
+  .button__label::before {
+    content: '';
+    position: absolute;
+    inset: -20% auto -20% 0;
+    width: 45%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-light) 22%, transparent),
+      transparent
+    );
+    transform: translateX(-130%) skewX(var(--light-skew));
+    pointer-events: none;
+  }
+
+  .button:hover .button__label::before {
+    transform: translateX(300%) skewX(var(--light-skew));
+    transition: transform var(--duration-light) var(--ease-out);
+  }
+
+  .button:hover .button__label,
+  .button:hover .button__pane {
+    background-color: var(--button-bg-hover);
+  }
+
+  /* a seta sai pela direita da vidraça e volta pela esquerda */
+  .button__pane :global(.button__arrow) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .button:hover .button__pane :global(.button__arrow) {
+    animation: arrow-through 640ms var(--ease-out);
+  }
+
+  @keyframes arrow-through {
+    45% {
+      transform: translateX(140%);
+    }
+
+    46% {
+      transform: translateX(-140%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .button:focus-visible {
+    outline-offset: 4px;
   }
 
   .button--sm {
-    min-height: 2.5rem;
+    --button-height: 2.75rem;
+  }
+
+  .button--sm .button__label {
     padding: 0.5rem 1.125rem;
   }
 
   .button--full {
+    display: flex;
     width: 100%;
   }
 
-  .button--primary {
-    --button-bg: var(--color-moss);
-    --button-fg: var(--color-paper);
-    --button-border: var(--color-moss);
+  .button--full .button__label {
+    justify-content: flex-start;
   }
 
-  .button--primary:hover {
-    --button-bg: var(--color-moss-hover);
-    --button-border: var(--color-moss-hover);
+  .button--secondary {
+    --button-bg: transparent;
+    --button-bg-hover: color-mix(in srgb, var(--fg) 7%, transparent);
+    --button-fg: var(--fg);
   }
 
-  .button--secondary:hover {
-    --button-bg: color-mix(in srgb, var(--fg) 7%, transparent);
+  .button--secondary .button__label,
+  .button--secondary .button__pane {
+    box-shadow: inset 0 0 0 1.5px currentColor;
   }
 
-  /* Em superfície escura o primário inverte: papel com texto em tinta */
+  /* Em superfície escura o primário inverte: vidro iluminado com texto em tinta */
   :global(.surface-dark) .button--primary {
-    --button-bg: var(--color-paper);
+    --button-bg: var(--color-light);
+    --button-bg-hover: var(--color-paper);
     --button-fg: var(--color-ink);
-    --button-border: var(--color-paper);
   }
 
-  :global(.surface-dark) .button--primary:hover {
-    --button-bg: var(--color-sage-100);
-    --button-border: var(--color-sage-100);
-  }
-
-  .button :global(.button__arrow) {
-    margin-inline-end: -0.25rem;
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  .button:hover :global(.button__arrow) {
-    transform: translateX(3px);
+  :global(.surface-dark) .button--primary .button__label::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, #fff 70%, transparent),
+      transparent
+    );
   }
 </style>

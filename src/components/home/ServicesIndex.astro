@@ -1,10 +1,15 @@
 ---
 /**
- * Serviços como índice editorial (sem grade de cards).
- * Desktop: painel de imagem fixo ao lado, que troca conforme o item em hover/foco
- * usando só CSS (:has). Telas menores: miniatura em cada linha.
+ * Práticas como vidraças de uma mesma janela: uma prática por vidraça,
+ * com o nome escrito no peitoril e a luz de cada vidraça no piso.
+ *
+ * Desktop: as quatro vidraças lado a lado; no hover/foco a vidraça "abre"
+ * (uma folha de luz sobe com o resumo) e a luz dela no piso se acende.
+ * Telas menores: a janela continua para fora da tela e as vidraças deslizam
+ * na horizontal, com encaixe (scroll-snap). Os botões e o contador são
+ * melhoria progressiva: sem JS, o deslize nativo continua funcionando.
  */
-import { Image, Picture } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import Emphasis from '@/components/ui/Emphasis.astro';
 import Icon from '@/components/ui/Icon.astro';
 import SectionLabel from '@/components/ui/SectionLabel.astro';
@@ -22,72 +27,73 @@ interface Props {
 
 const { locale, content, services } = Astro.props;
 const servicesPath = getLocalizedPath('services', locale);
-const items = services.map((service, index) => ({
-  ...service,
-  number: String(index + 1).padStart(2, '0'),
-  photo: getPhoto(service.image),
-}));
+const items = services.map((service) => ({ ...service, photo: getPhoto(service.image) }));
 ---
 
-<section class="services" aria-labelledby="services-title">
+<section class="practices" aria-labelledby="practices-title">
   <div class="container">
-    <header class="services__head">
-      <div class="services__heading">
+    <header class="practices__head">
+      <div class="practices__heading">
         <SectionLabel number="02">{content.label}</SectionLabel>
-        <h2 id="services-title">
+        <h2 id="practices-title">
           <Emphasis text={content.title} />
         </h2>
       </div>
-      <p class="services__intro">{content.intro}</p>
+      <p class="practices__intro">{content.intro}</p>
     </header>
 
-    <div class="services__body">
-      <ol class="services__list" role="list">
+    <div class="practices__window" data-panes>
+      <ol class="practices__panes" role="list" data-panes-track>
         {items.map((item) => (
-          <li class="service">
-            <a class="service__link" href={`${servicesPath}#${item.anchor}`}>
-              <span class="service__number" aria-hidden="true">
-                {item.number}
-              </span>
-              <span class="service__main">
-                <h3 class="service__title">{item.title}</h3>
-                <span class="service__summary">{item.summary}</span>
-                <span class="service__duration">
-                  {item.durationMinutes} {content.durationUnit}
-                </span>
-              </span>
-              <span class="service__thumb media-frame">
-                <Image
+          <li class="pane">
+            <a class="pane__link" href={`${servicesPath}#${item.anchor}`}>
+              <span class="pane__glass">
+                <Picture
                   src={item.photo.src}
                   alt=""
-                  widths={[160, 240]}
-                  sizes="5rem"
+                  widths={[400, 640, 900]}
+                  sizes="(min-width: 60rem) 24vw, (min-width: 40rem) 46vw, 76vw"
+                  formats={['avif', 'webp']}
                   style={
                     item.photo.position ? `object-position: ${item.photo.position}` : undefined
                   }
                 />
               </span>
-              <Icon name="arrow-right" size={22} class="service__arrow" />
+              <span class="pane__sheet">{item.summary}</span>
+              <span class="pane__sill" aria-hidden="true"></span>
+              <span class="pane__name">
+                <h3 class="pane__title">{item.title}</h3>
+                <span class="pane__duration">
+                  {item.durationMinutes} {content.durationUnit}
+                </span>
+              </span>
+              <span class="pane__floor" aria-hidden="true"></span>
             </a>
           </li>
         ))}
       </ol>
 
-      <div class="services__preview media-frame" aria-hidden="true">
-        {items.map((item) => (
-          <Picture
-            src={item.photo.src}
-            alt=""
-            widths={[480, 720, 960]}
-            sizes="30vw"
-            formats={['avif', 'webp']}
-            style={item.photo.position ? `object-position: ${item.photo.position}` : undefined}
-          />
-        ))}
+      <div class="practices__controls" data-panes-controls hidden>
+        <p class="practices__hint" aria-hidden="true">
+          {content.swipeHint}
+          <span class="practices__count">
+            <span data-panes-current>1</span> / {items.length}
+          </span>
+        </p>
+        <div class="practices__buttons">
+          <button type="button" class="practices__button" data-panes-prev>
+            <Icon name="arrow-left" size={18} />
+            <span class="visually-hidden">{content.previous}</span>
+          </button>
+          <button type="button" class="practices__button" data-panes-next>
+            <Icon name="arrow-right" size={18} />
+            <span class="visually-hidden">{content.next}</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="services__more">
+    <div class="practices__more">
       <TextLink href={servicesPath} arrow>
         {content.link.label}
       </TextLink>
@@ -95,204 +101,403 @@ const items = services.map((service, index) => ({
   </div>
 </section>
 
+<script>
+  // Controles das vidraças deslizantes: avançam uma vidraça e mostram a posição.
+  for (const root of document.querySelectorAll<HTMLElement>('[data-panes]')) {
+    const track = root.querySelector<HTMLElement>('[data-panes-track]');
+    const controls = root.querySelector<HTMLElement>('[data-panes-controls]');
+    const current = root.querySelector<HTMLElement>('[data-panes-current]');
+    const prev = root.querySelector<HTMLButtonElement>('[data-panes-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-panes-next]');
+    if (!track || !controls || !current || !prev || !next) continue;
+
+    const panes = Array.from(track.children) as HTMLElement[];
+    controls.hidden = false;
+
+    const indexNow = () => {
+      const start =
+        track.getBoundingClientRect().left +
+        parseFloat(getComputedStyle(track).scrollPaddingInlineStart || '0');
+      const distances = panes.map((pane) => Math.abs(pane.getBoundingClientRect().left - start));
+      return distances.indexOf(Math.min(...distances));
+    };
+
+    const update = () => {
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      const index = atEnd ? panes.length - 1 : indexNow();
+      current.textContent = String(index + 1);
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = atEnd;
+    };
+
+    const go = (step: number) => {
+      const target = panes[Math.min(panes.length - 1, Math.max(0, indexNow() + step))];
+      if (!target) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      track.scrollTo({
+        left:
+          target.offsetLeft -
+          track.offsetLeft -
+          parseFloat(getComputedStyle(track).scrollPaddingInlineStart || '0'),
+        behavior: reduce ? 'auto' : 'smooth',
+      });
+    };
+
+    prev.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>
+
 <style>
-  .services {
-    padding-block: var(--space-section);
+  .practices {
+    padding-block: var(--space-section) var(--space-2xl);
+    overflow: clip;
   }
 
-  .services__head {
+  .practices__head {
     display: grid;
     gap: var(--space-m);
     margin-bottom: var(--space-2xl);
   }
 
-  .services__heading {
+  .practices__heading {
     display: grid;
     gap: var(--space-m);
   }
 
-  .services__heading h2 {
-    max-width: 14ch;
-  }
-
-  .services__intro {
+  .practices__intro {
     max-width: 38ch;
     color: var(--fg-muted);
   }
 
-  .services__list {
-    border-bottom: var(--border-hairline);
+  /* ---------- A janela ---------- */
+
+  .practices__panes {
+    --pane-height: clamp(22rem, 104vw, 28rem);
+
+    display: flex;
+    /* a janela continua até a borda da tela: as vidraças deslizam por ela */
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-bottom: var(--space-s);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
   }
 
-  .service {
-    border-top: var(--border-hairline);
+  .practices__panes::-webkit-scrollbar {
+    display: none;
   }
 
-  .service__link {
+  .pane {
+    flex: 0 0 76%;
+    scroll-snap-align: start;
+  }
+
+  /* as vidraças se sobrepõem pela borda: entre duas fica um só montante */
+  .pane + .pane {
+    margin-inline-start: calc(var(--bar) * -1);
+  }
+
+  .pane__link {
     display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
-    align-items: start;
-    gap: var(--space-s);
-    padding-block: var(--space-m);
+    grid-template-areas:
+      'glass'
+      'sill'
+      'name'
+      'sheet';
     text-decoration: none;
   }
 
-  .service__number {
-    padding-top: 0.6rem;
-    font-family: var(--font-display);
-    font-size: var(--step-0);
-    font-style: italic;
-    color: var(--accent);
+  .pane__link:focus-visible {
+    outline-offset: -2px;
   }
 
-  .service__main {
-    display: grid;
-    gap: 0.375rem;
+  .pane__glass {
+    grid-area: glass;
+    position: relative;
+    display: block;
+    height: var(--pane-height);
+    overflow: hidden;
+    border: var(--bar) solid var(--color-frame);
+    background-color: var(--color-sage-100);
   }
 
-  .service__title {
-    font-size: var(--step-3);
-    line-height: 1.1;
+  /* sombra do batente sobre o vidro */
+  .pane__glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: var(--shadow-reveal);
+    pointer-events: none;
+  }
+
+  .pane__glass :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .pane__glass :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition:
-      translate var(--duration-base) var(--ease-out),
-      color var(--duration-base) var(--ease-out);
+      scale 1.2s var(--ease-out),
+      filter var(--duration-slow) var(--ease-out);
   }
 
-  .service__summary {
-    max-width: 46ch;
-    font-size: var(--step--1);
-    color: var(--fg-muted);
+  /* peitoril contínuo: em cada ponta da janela ele avança sobre a parede */
+  .pane__sill {
+    grid-area: sill;
+    height: calc(var(--bar) * 1.5);
+    background-color: var(--color-frame);
+    box-shadow: var(--shadow-wall);
   }
 
-  .service__duration {
-    margin-top: 0.25rem;
+  .pane:first-child .pane__sill {
+    margin-inline-start: calc(var(--bar) * -1.75);
+  }
+
+  .pane:last-child .pane__sill {
+    margin-inline-end: calc(var(--bar) * -1.75);
+  }
+
+  .pane__name {
+    grid-area: name;
+    display: grid;
+    gap: 0.5rem;
+    padding: var(--space-s) var(--bar) 0 calc(var(--bar) * 2);
+  }
+
+  .pane__title {
+    font-size: var(--step-3);
+    line-height: 1;
+    transition: color var(--duration-base) var(--ease-out);
+  }
+
+  .pane__duration {
     font-size: var(--step--2);
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--fg-muted);
   }
 
-  .service__thumb {
-    width: 4.5rem;
-    aspect-ratio: 1;
+  .pane__sheet {
+    grid-area: sheet;
+    padding: 0.625rem var(--space-s) 0 calc(var(--bar) * 2);
+    max-width: 34ch;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--fg-muted);
   }
 
-  .service__link :global(.service__arrow) {
-    display: none;
-    transition: translate var(--duration-base) var(--ease-out);
-  }
-
-  .service__link:hover .service__title,
-  .service__link:focus-visible .service__title {
-    translate: 0.5rem 0;
-    color: var(--color-moss);
-  }
-
-  .service__link:hover :global(.service__arrow),
-  .service__link:focus-visible :global(.service__arrow) {
-    translate: 0.375rem 0;
-  }
-
-  .services__preview {
+  .pane__floor {
     display: none;
   }
 
-  .services__more {
+  /* ---------- Controles (telas menores) ---------- */
+
+  .practices__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-top: var(--space-m);
+  }
+
+  .practices__controls[hidden] {
+    display: none;
+  }
+
+  .practices__hint {
+    display: flex;
+    gap: 1rem;
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .practices__count {
+    color: var(--fg);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  /* os controles repetem o botão em duas vidraças */
+  .practices__buttons {
+    display: flex;
+    gap: 2px;
+  }
+
+  .practices__button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    background-color: var(--color-frame);
+    color: var(--color-light);
+    transition:
+      background-color var(--duration-base) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
+  .practices__button:hover:not(:disabled) {
+    background-color: var(--color-moss-hover);
+  }
+
+  .practices__button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .practices__more {
     margin-top: var(--space-xl);
   }
 
+  @media (min-width: 40rem) {
+    .practices__panes {
+      --pane-height: 30rem;
+    }
+
+    .pane {
+      flex-basis: 46%;
+    }
+  }
+
+  /* ---------- Desktop: a janela inteira, quatro vidraças ---------- */
+
   @media (min-width: 60rem) {
-    .services__head {
+    .practices__head {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: var(--grid-gap);
       align-items: end;
     }
 
-    .services__heading {
-      grid-column: 1 / span 7;
+    .practices__heading {
+      grid-column: 1 / span 8;
     }
 
-    .services__intro {
+    .practices__intro {
       grid-column: 9 / span 4;
     }
 
-    .services__body {
+    .practices__panes {
+      --pane-height: clamp(28rem, 38vw, 36rem);
+
       display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: var(--grid-gap);
-      align-items: start;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-inline: 0;
+      padding: 0;
+      overflow: visible;
     }
 
-    .services__list {
-      grid-column: 1 / span 7;
+    .pane {
+      display: grid;
     }
 
-    .service__link {
-      grid-template-columns: 3.5rem minmax(0, 1fr) auto;
-      align-items: center;
-      padding-block: var(--space-l);
+    .pane + .pane {
+      margin-inline-start: 0;
     }
 
-    .service__number {
-      padding-top: 0;
-      align-self: start;
-      padding-block-start: 0.9rem;
+    .pane + .pane .pane__glass {
+      margin-inline-start: calc(var(--bar) * -1);
     }
 
-    .service__title {
-      font-size: var(--step-4);
+    .pane__link {
+      grid-template-areas:
+        'glass'
+        'sill'
+        'name'
+        'floor';
     }
 
-    .service__thumb {
+    /* folha de luz dentro da vidraça, com o resumo da prática */
+    .pane__sheet {
+      grid-area: glass;
+      align-self: end;
+      z-index: 1;
+      max-width: none;
+      margin: var(--bar);
+      padding: var(--space-s) var(--space-s) var(--space-m);
+      background-color: var(--color-light);
+      color: var(--fg-muted);
+    }
+
+    .pane__title {
+      font-size: var(--step-2);
+    }
+
+    /* a luz de cada vidraça no piso, logo abaixo do nome */
+    .pane__floor {
+      grid-area: floor;
+      display: block;
+      height: clamp(4rem, 6vw, 6rem);
+      margin: var(--space-m) 14% 0 24%;
+      background-color: var(--color-light);
+      transform: skewX(var(--light-skew-floor));
+      filter: blur(var(--light-blur));
+      opacity: 0.45;
+      transition:
+        opacity var(--duration-slow) var(--ease-out),
+        translate var(--duration-slow) var(--ease-out);
+    }
+
+    .practices__controls {
       display: none;
     }
 
-    .service__link :global(.service__arrow) {
-      display: block;
+    .practices__more {
+      margin-top: var(--space-l);
+    }
+  }
+
+  /* com ponteiro fino, o resumo só aparece quando a vidraça "abre" */
+  @media (min-width: 60rem) and (hover: hover) {
+    .pane__sheet {
+      clip-path: inset(100% 0 0 0);
+      transition: clip-path var(--duration-slow) var(--ease-out);
     }
 
-    /* Painel de imagem: acompanha a lista e troca com o item ativo */
-    .services__preview {
-      position: sticky;
-      top: calc(var(--header-height) + var(--space-l));
-      display: grid;
-      grid-column: 9 / span 4;
-      aspect-ratio: 4 / 5;
+    .pane__link:is(:hover, :focus-visible) .pane__sheet {
+      clip-path: inset(0);
     }
 
-    .services__preview > :global(picture) {
-      grid-area: 1 / 1;
-      opacity: 0;
-      transition: opacity var(--duration-slow) var(--ease-out);
+    .pane__link:is(:hover, :focus-visible) .pane__glass :global(img) {
+      scale: 1.05;
     }
 
-    .services__preview > :global(picture:first-child) {
+    .pane__link:is(:hover, :focus-visible) .pane__title {
+      font-style: italic;
+    }
+
+    .pane__link:is(:hover, :focus-visible) .pane__duration {
+      color: var(--accent);
+    }
+
+    .pane__link:is(:hover, :focus-visible) .pane__floor {
       opacity: 1;
+      translate: -0.5rem 0;
     }
 
-    .services__body:has(.service:not(:first-child) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:first-child) {
-      opacity: 0;
+    /* as outras vidraças escurecem um pouco: a luz se concentra na escolhida */
+    .practices__panes:has(.pane__link:is(:hover, :focus-visible))
+      .pane__link:not(:hover, :focus-visible)
+      .pane__glass
+      :global(img) {
+      filter: brightness(0.82) saturate(0.75);
     }
 
-    .services__body:has(.service:nth-child(2) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:nth-child(2)),
-    .services__body:has(.service:nth-child(3) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:nth-child(3)),
-    .services__body:has(.service:nth-child(4) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:nth-child(4)),
-    .services__body:has(.service:nth-child(5) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:nth-child(5)),
-    .services__body:has(.service:nth-child(6) .service__link:is(:hover, :focus-visible))
-      .services__preview
-      > :global(picture:nth-child(6)) {
-      opacity: 1;
+    .practices__panes:has(.pane__link:is(:hover, :focus-visible))
+      .pane__link:not(:hover, :focus-visible)
+      .pane__floor {
+      opacity: 0.25;
     }
   }
 </style>

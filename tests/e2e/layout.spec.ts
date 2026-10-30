@@ -97,3 +97,25 @@ test('sistema visual fica fora dos buscadores', async ({ page, request }) => {
   const sitemap = await (await request.get('/sitemap-0.xml')).text();
   expect(sitemap).not.toContain('sistema-visual');
 });
+
+test.describe('práticas na Home', () => {
+  test('vidraças deslizam com os controles (telas menores) ou ficam lado a lado', async ({
+    page,
+    viewport,
+  }) => {
+    await page.goto('/');
+    const controls = page.locator('[data-panes-controls]');
+
+    if (isDesktop(viewport?.width)) {
+      await expect(controls).toBeHidden();
+      return;
+    }
+
+    const prev = page.getByRole('button', { name: 'Prática anterior' });
+    const next = page.getByRole('button', { name: 'Próxima prática' });
+    await expect(prev).toBeDisabled();
+    await next.click();
+    await expect(page.locator('[data-panes-current]')).toHaveText('2');
+    await expect(prev).toBeEnabled();
+  });
+});

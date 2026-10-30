@@ -1,12 +1,12 @@
 {
   "hero": {
     "eyebrow": "Terapias integrativas · presencial e online",
-    "title": "O cuidado começa na *pausa*.",
+    "title": "O cuidado|começa|na *pausa*.",
     "lead": "Terapia somática, meditação, reiki e aromaterapia para desacelerar, perceber o corpo e reencontrar um ritmo que seja seu.",
     "secondaryCta": {
       "label": "Conhecer os serviços"
     },
-    "caption": "Uma manhã sem pressa.",
+    "caption": "Luz das 7h40",
     "facts": ["Atendimento individual", "Sessões de 50 a 80 minutos", "Presencial e online"]
   },
   "intro": {
@@ -23,8 +23,11 @@
   },
   "services": {
     "label": "Serviços",
-    "title": "Quatro caminhos para a *mesma* pausa.",
-    "intro": "Cada prática tem o seu ritmo. Na primeira conversa, vemos juntos qual delas faz mais sentido para o seu momento.",
+    "title": "Quatro janelas para a *mesma* pausa.",
+    "intro": "Cada prática abre uma vista diferente. Na primeira conversa, vemos juntos qual delas faz mais sentido para o seu momento.",
+    "swipeHint": "Deslize as vidraças",
+    "previous": "Prática anterior",
+    "next": "Próxima prática",
     "durationUnit": "min",
     "link": {
       "label": "Ver detalhes e valores"
@@ -32,7 +35,8 @@
   },
   "experience": {
     "label": "A sessão",
-    "title": "Como é um *encontro*",
+    "title": "Como a luz atravessa uma *sessão*",
+    "intro": "Quatro momentos, da chegada à volta. Sem pressa e sem fórmula pronta.",
     "steps": [
       {
         "title": "Chegada",
