@@ -1,0 +1,84 @@
+---
+import BreathRing from '@/components/brand/BreathRing.astro';
+import Button from '@/components/ui/Button.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { site } from '@/data/site';
+import type { Locale } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+import type { getHomeContent } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  content: Awaited<ReturnType<typeof getHomeContent>>['closing'];
+}
+
+const { locale, content } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section class="closing surface-sage" aria-labelledby="closing-title">
+  <div class="container closing__inner">
+    <div class="closing__ring">
+      <BreathRing />
+    </div>
+    <h2 id="closing-title" class="closing__title">
+      <Emphasis text={content.title} />
+    </h2>
+    <p class="closing__text">{content.text}</p>
+    <div class="closing__actions">
+      <Button href={getLocalizedPath('contact', locale)} arrow>
+        {t.nav.book}
+      </Button>
+      <TextLink href={site.contact.whatsapp.href} external locale={locale}>
+        {content.whatsappCta.label}
+      </TextLink>
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    overflow: hidden;
+  }
+
+  .closing__inner {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-m);
+    padding-block: var(--space-section);
+    text-align: center;
+  }
+
+  /* o anel envolve o título, como uma respiração em volta da frase */
+  .closing__ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(44rem, 118vw);
+    translate: -50% -50%;
+  }
+
+  .closing__title {
+    position: relative;
+    font-size: var(--step-5);
+    max-width: 12ch;
+  }
+
+  .closing__text {
+    position: relative;
+    max-width: 40ch;
+    color: var(--fg-muted);
+  }
+
+  .closing__actions {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-s) var(--space-l);
+    margin-top: var(--space-xs);
+  }
+</style>

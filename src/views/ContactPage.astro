@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const page = useTranslations(locale).pages.contact;
+---
+
+<BaseLayout locale={locale} route="contact" title={page.title} description={page.description}>
+  {/* Conteúdo da página nas próximas etapas. */}
+  <div class="container page-stub">
+    <h1>{page.title}</h1>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-stub {
+    padding-block: var(--space-section);
+  }
+</style>

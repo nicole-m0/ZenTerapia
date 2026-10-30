@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ClosingCta from '@/components/home/ClosingCta.astro';
+import Experience from '@/components/home/Experience.astro';
+import Hero from '@/components/home/Hero.astro';
+import Intro from '@/components/home/Intro.astro';
+import ServicesIndex from '@/components/home/ServicesIndex.astro';
+import Testimonials from '@/components/home/Testimonials.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/utils';
+import { getHomeContent, getServices, getTestimonials } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const page = useTranslations(locale).pages.home;
+const [content, services, testimonials] = await Promise.all([
+  getHomeContent(locale),
+  getServices(locale),
+  getTestimonials(locale),
+]);
+---
+
+<BaseLayout locale={locale} route="home" title={page.title} description={page.description}>
+  <Hero locale={locale} content={content.hero} />
+  <Intro locale={locale} content={content.intro} />
+  <ServicesIndex locale={locale} content={content.services} services={services} />
+  <Experience locale={locale} content={content.experience} />
+  <Testimonials content={content.testimonials} testimonials={testimonials} />
+  <ClosingCta locale={locale} content={content.closing} />
+</BaseLayout>

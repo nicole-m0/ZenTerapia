@@ -1,0 +1,193 @@
+---
+import { Picture } from 'astro:assets';
+import BreathRing from '@/components/brand/BreathRing.astro';
+import Button from '@/components/ui/Button.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { images } from '@/data/images';
+import type { Locale } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+import type { getHomeContent } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  content: Awaited<ReturnType<typeof getHomeContent>>['hero'];
+}
+
+const { locale, content } = Astro.props;
+const t = useTranslations(locale);
+const photo = images.heroJanela;
+---
+
+<section class="hero container" aria-labelledby="hero-title">
+  <div class="hero__text">
+    <p class="eyebrow hero__eyebrow">{content.eyebrow}</p>
+    <h1 id="hero-title" class="hero__title">
+      <Emphasis text={content.title} />
+    </h1>
+    <p class="lead hero__lead">{content.lead}</p>
+    <div class="hero__actions">
+      <Button href={getLocalizedPath('contact', locale)} arrow>
+        {t.nav.book}
+      </Button>
+      <TextLink href={getLocalizedPath('services', locale)} arrow>
+        {content.secondaryCta.label}
+      </TextLink>
+    </div>
+  </div>
+
+  <figure class="hero__figure">
+    <div class="hero__media media-frame">
+      <Picture
+        src={photo.src}
+        alt={photo.alt[locale]}
+        widths={[480, 720, 960, 1280, 1600]}
+        sizes="(min-width: 60rem) 38vw, (min-width: 40rem) 72vw, 86vw"
+        formats={['avif', 'webp']}
+        loading="eager"
+        fetchpriority="high"
+        style={`object-position: ${photo.position}`}
+      />
+    </div>
+    <div class="hero__ring">
+      <BreathRing />
+    </div>
+    <figcaption class="hero__caption">{content.caption}</figcaption>
+  </figure>
+
+  <ul class="hero__facts" role="list">
+    {content.facts.map((fact) => (
+      <li>{fact}</li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .hero__text {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-m);
+  }
+
+  .hero__title {
+    font-size: var(--step-6);
+    line-height: 0.98;
+    max-width: 9ch;
+  }
+
+  .hero__lead {
+    max-width: 34ch;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-s) var(--space-l);
+    margin-top: var(--space-2xs);
+  }
+
+  /* Imagem recuada à direita no celular: assimetria desde a menor tela */
+  .hero__figure {
+    position: relative;
+    margin-top: var(--space-2xl);
+    margin-left: 14%;
+  }
+
+  .hero__media {
+    aspect-ratio: 4 / 5;
+  }
+
+  /* O anel cruza a borda da foto: metade no papel, metade na imagem */
+  .hero__ring {
+    position: absolute;
+    left: -22%;
+    bottom: 16%;
+    width: 52%;
+  }
+
+  .hero__caption {
+    margin-top: var(--space-xs);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-0);
+    color: var(--fg-muted);
+    text-align: right;
+  }
+
+  .hero__facts {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-s);
+    border-top: var(--border-hairline);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+  }
+
+  .hero__facts li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero__facts li::before {
+    content: '';
+    width: 0.3125rem;
+    height: 0.3125rem;
+    border-radius: 50%;
+    background-color: var(--color-sage-300);
+  }
+
+  @media (min-width: 40rem) {
+    .hero__figure {
+      width: 72%;
+      margin-left: auto;
+    }
+
+    .hero__facts {
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      column-gap: var(--space-xl);
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .hero {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      padding-top: var(--space-2xl);
+    }
+
+    .hero__text {
+      grid-column: 1 / span 6;
+      grid-row: 1;
+      align-self: end;
+      padding-bottom: var(--space-3xl);
+    }
+
+    .hero__figure {
+      grid-column: 8 / span 5;
+      grid-row: 1;
+      width: auto;
+      margin: 0;
+    }
+
+    .hero__ring {
+      left: -30%;
+      bottom: 10%;
+      width: 56%;
+    }
+
+    .hero__facts {
+      grid-column: 1 / -1;
+      margin-top: var(--space-2xl);
+    }
+  }
+</style>

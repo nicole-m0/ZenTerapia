@@ -1,0 +1,136 @@
+/*
+ * Terapia Zen — design tokens
+ *
+ * Conceito: "respiro". Superfícies frias e claras (papel, névoa, sálvia),
+ * texto em verde quase preto e um único acento quente (argila) usado em detalhes.
+ *
+ * Contraste WCAG medido (texto sobre fundo):
+ *   ink   / paper  13.85  ·  ink   / mist  12.52  ·  ink   / sage-100 11.71
+ *   moss  / paper  10.13  ·  stone / paper  5.99  ·  stone / mist      5.42
+ *   stone / sage-100 5.06 ·  paper / moss  10.13  ·  paper / moss-hover 7.47
+ *   clay  / paper   4.62  (só sobre paper)
+ *   Superfície escura: paper / ink 13.85 · ink-muted / ink 7.00 · clay-light / ink 6.51
+ *   Bordas de campo (UI, mín. 3:1): field / paper 3.65 · field / mist 3.30
+ *   `line` (1.47) é decorativa: nunca usada como única pista de um controle.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Cor: base */
+  --color-paper: #f4f3ee;
+  --color-mist: #e2e9ea;
+  --color-sage-100: #dce3d3;
+  --color-sage-300: #b6c5ac;
+  --color-ink: #1d2721;
+  --color-moss: #2c3f33;
+  --color-moss-hover: #3a5443;
+  --color-stone: #585e57;
+  --color-line: #c9ccc2;
+  --color-field: #7a8077;
+  --color-clay: #a35a3f;
+
+  /* Cor: superfície escura */
+  --color-ink-muted: #a7b2a4;
+  --color-ink-line: #3a463e;
+  --color-clay-light: #d99a7f;
+
+  /* Cor: papéis semânticos (redefinidos em .surface-dark) */
+  --bg: var(--color-paper);
+  --fg: var(--color-ink);
+  --fg-muted: var(--color-stone);
+  --rule: var(--color-line);
+  --accent: var(--color-clay);
+  --focus: var(--color-moss);
+
+  /* Tipografia (as famílias vêm da Fonts API: --font-display-family, --font-body-family) */
+  --font-display: var(--font-display-family), 'Times New Roman', serif;
+  --font-body: var(--font-body-family), system-ui, sans-serif;
+
+  /* Escala tipográfica fluida (375px → 1440px) */
+  --step--2: clamp(0.75rem, 0.728rem + 0.0939vw, 0.8125rem);
+  --step--1: clamp(0.875rem, 0.853rem + 0.0939vw, 0.9375rem);
+  --step-0: clamp(1.0625rem, 1.0405rem + 0.0939vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.184rem + 0.2817vw, 1.4375rem);
+  --step-2: clamp(1.5rem, 1.346rem + 0.6573vw, 1.9375rem);
+  --step-3: clamp(1.875rem, 1.5669rem + 1.3146vw, 2.75rem);
+  --step-4: clamp(2.25rem, 1.7218rem + 2.2535vw, 3.75rem);
+  --step-5: clamp(2.75rem, 1.8697rem + 3.7559vw, 5.25rem);
+  --step-6: clamp(3.125rem, 1.5845rem + 6.5728vw, 7.5rem);
+
+  --leading-tight: 1.04;
+  --leading-snug: 1.2;
+  --leading-body: 1.62;
+  --tracking-display: -0.015em;
+  --tracking-label: 0.14em;
+  --measure: 62ch;
+  --measure-narrow: 44ch;
+
+  /* Espaçamento fluido */
+  --space-3xs: clamp(0.25rem, 0.228rem + 0.0939vw, 0.3125rem);
+  --space-2xs: clamp(0.5rem, 0.456rem + 0.1878vw, 0.625rem);
+  --space-xs: clamp(0.75rem, 0.684rem + 0.2817vw, 0.9375rem);
+  --space-s: clamp(1rem, 0.912rem + 0.3756vw, 1.25rem);
+  --space-m: clamp(1.5rem, 1.368rem + 0.5634vw, 1.875rem);
+  --space-l: clamp(2rem, 1.8239rem + 0.7512vw, 2.5rem);
+  --space-xl: clamp(3rem, 2.7359rem + 1.1268vw, 3.75rem);
+  --space-2xl: clamp(4rem, 3.6479rem + 1.5023vw, 5rem);
+  --space-3xl: clamp(6rem, 5.4718rem + 2.2535vw, 7.5rem);
+  --space-section: clamp(5rem, 3.2394rem + 7.5117vw, 10rem);
+
+  /* Layout */
+  --container-max: 90rem;
+  --gutter: clamp(1.25rem, 0.2817rem + 4.1315vw, 4rem);
+  --grid-gap: clamp(1rem, 0.6rem + 1.7vw, 2rem);
+  --header-height: 4.75rem;
+
+  /* Forma */
+  --radius-xs: 2px;
+  --radius-s: 6px;
+  --radius-pill: 999px;
+  --border-hairline: 1px solid var(--rule);
+
+  /* Movimento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 160ms;
+  --duration-base: 320ms;
+  --duration-slow: 700ms;
+
+  /* Camadas */
+  --z-header: 50;
+  --z-grain: 100;
+}
+
+@media (min-width: 60rem) {
+  :root {
+    --header-height: 5.5rem;
+  }
+}
+
+/* Superfície escura (footer, faixas de destaque) */
+.surface-dark {
+  --bg: var(--color-ink);
+  --fg: var(--color-paper);
+  --fg-muted: var(--color-ink-muted);
+  --rule: var(--color-ink-line);
+  --accent: var(--color-clay-light);
+  --focus: var(--color-paper);
+
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+.surface-mist {
+  --bg: var(--color-mist);
+  --accent: var(--color-moss);
+
+  background-color: var(--bg);
+}
+
+.surface-sage {
+  --bg: var(--color-sage-100);
+  --accent: var(--color-moss);
+
+  background-color: var(--bg);
+}

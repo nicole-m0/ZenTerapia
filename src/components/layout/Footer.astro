@@ -1,0 +1,291 @@
+---
+import Logo from '@/components/brand/Logo.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { getPrimaryNav } from './navigation';
+import { site } from '@/data/site';
+import type { Locale, RouteKey } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey | null;
+}
+
+const { locale, route } = Astro.props;
+const t = useTranslations(locale);
+const nav = getPrimaryNav(locale);
+const { whatsapp, instagram, email } = site.contact;
+const [brandFirst, ...brandRest] = site.name.split(' ');
+
+const contacts = [
+  { name: 'WhatsApp', ...whatsapp, external: true },
+  { name: 'Instagram', ...instagram, external: true },
+  { name: 'E-mail', ...email, external: false },
+];
+---
+
+<footer class="site-footer surface-dark">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <Logo />
+        <p class="site-footer__tagline">{t.footer.tagline}</p>
+        <p class="site-footer__modality">{t.footer.modality}</p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--nav" aria-labelledby="footer-nav-heading">
+        <h2 id="footer-nav-heading" class="eyebrow">
+          {t.footer.navHeading}
+        </h2>
+        <ul role="list">
+          {nav.map((item) => (
+            <li>
+              <a
+                class="site-footer__link"
+                href={item.href}
+                aria-current={item.route === route ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--contact">
+        <h2 class="eyebrow">{t.footer.contactHeading}</h2>
+        <ul role="list" class="site-footer__contacts">
+          {contacts.map((contact) => (
+            <li>
+              <span class="site-footer__contact-name">{contact.name}</span>
+              <TextLink href={contact.href} external={contact.external} locale={locale}>
+                {contact.label}
+              </TextLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__col site-footer__col--lang">
+        <h2 class="eyebrow">{t.footer.languageHeading}</h2>
+        <LanguageSwitcher locale={locale} route={route} display="full" orientation="vertical" />
+      </div>
+    </div>
+
+    <div
+      class="site-footer__wordmark"
+      data-first={brandFirst}
+      data-rest={brandRest.join(' ')}
+      aria-hidden="true"
+    ></div>
+
+    <div class="site-footer__legal">
+      <p>
+        © {site.foundedYear} {site.name}
+      </p>
+      <p>{t.demo.notice}</p>
+      <a href={getLocalizedPath('legal', locale)}>{t.nav.legal}</a>
+    </div>
+    <p class="site-footer__disclaimer">{t.footer.disclaimer}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-l);
+    overflow: hidden;
+  }
+
+  /* Celular: navegação e idioma lado a lado; contato com a largura toda (e-mails longos) */
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-xl) var(--grid-gap);
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'brand brand'
+      'nav lang'
+      'contact contact';
+  }
+
+  .site-footer__brand {
+    grid-area: brand;
+  }
+
+  .site-footer__col--nav {
+    grid-area: nav;
+  }
+
+  .site-footer__col--contact {
+    grid-area: contact;
+  }
+
+  .site-footer__col--lang {
+    grid-area: lang;
+  }
+
+  .site-footer__tagline {
+    margin-top: var(--space-m);
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.12;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .site-footer__modality {
+    margin-top: var(--space-s);
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+
+  .site-footer__col h2 {
+    margin-bottom: var(--space-s);
+  }
+
+  .site-footer__col ul {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .site-footer__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .site-footer__link:hover {
+    color: var(--color-sage-300);
+  }
+
+  .site-footer__link[aria-current='page'] {
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+  }
+
+  .site-footer__col .site-footer__contacts {
+    gap: var(--space-xs);
+  }
+
+  .site-footer__contacts li {
+    display: grid;
+    justify-items: start;
+    gap: 0.125rem;
+    white-space: nowrap;
+  }
+
+  .site-footer__contact-name {
+    font-size: var(--step--2);
+    color: var(--fg-muted);
+  }
+
+  /*
+   * Assinatura tipográfica, tom sobre tom e decorativa. A caixa é calculada pelas
+   * métricas da Instrument Serif (ascendente 0.99em, descendente 0.31em) para a
+   * linha de base pousar no filete de baixo e os descendentes serem cortados por ele.
+   * O texto vem de pseudo-elementos: é decoração, não conteúdo (WCAG 1.4.3, texto decorativo).
+   */
+  .site-footer__wordmark {
+    box-sizing: border-box;
+    height: 0.77em;
+    max-width: none;
+    margin-top: var(--space-3xl);
+    padding-top: 0.02em;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: clamp(4.25rem, 0.4rem + 16.4vw, 15.5rem);
+    line-height: 0.78;
+    letter-spacing: -0.035em;
+    white-space: nowrap;
+    color: var(--color-ink-line);
+    user-select: none;
+  }
+
+  .site-footer__wordmark::before {
+    content: attr(data-first) ' ';
+  }
+
+  .site-footer__wordmark::after {
+    content: attr(data-rest);
+    font-style: italic;
+    /* o Z itálico avança além da caixa; folga para não ser cortado à direita */
+    padding-inline-end: 0.08em;
+  }
+
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    padding-top: var(--space-m);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink-muted) 45%, transparent);
+    font-size: var(--step--2);
+    color: var(--fg-muted);
+  }
+
+  .site-footer__legal p {
+    max-width: none;
+  }
+
+  .site-footer__legal a {
+    color: var(--fg);
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  }
+
+  .site-footer__legal a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .site-footer__disclaimer {
+    margin-top: var(--space-2xs);
+    font-size: var(--step--2);
+    color: var(--fg-muted);
+    max-width: 70ch;
+  }
+
+  @media (min-width: 40rem) {
+    .site-footer__grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-areas:
+        'brand brand brand'
+        'nav contact lang';
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .site-footer__grid {
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-areas: none;
+    }
+
+    /* sem áreas nomeadas, cada coluna é posicionada explicitamente na mesma linha */
+    .site-footer__grid > * {
+      grid-row: 1;
+    }
+
+    .site-footer__brand {
+      grid-column: 1 / span 4;
+    }
+
+    .site-footer__col--nav {
+      grid-column: 6 / span 2;
+    }
+
+    .site-footer__col--contact {
+      grid-column: 8 / span 3;
+    }
+
+    .site-footer__col--lang {
+      grid-column: 11 / span 2;
+    }
+
+    .site-footer__legal {
+      justify-content: space-between;
+    }
+  }
+</style>

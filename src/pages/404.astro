@@ -1,0 +1,51 @@
+---
+/**
+ * Um site estático gera um único 404.html para todos os idiomas,
+ * por isso esta página traz as duas versões lado a lado.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localeMeta } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+
+const pt = useTranslations('pt');
+const en = useTranslations('en');
+---
+
+<BaseLayout
+  locale="pt"
+  route={null}
+  title={`${pt.pages.notFound.title} · ${en.pages.notFound.title}`}
+  description={pt.pages.notFound.description}
+  noindex
+>
+  <div class="container not-found">
+    <section>
+      <h1>{pt.pages.notFound.title}</h1>
+      <p>{pt.pages.notFound.description}</p>
+      <a href={getLocalizedPath('home', 'pt')}>{pt.nav.home}</a>
+    </section>
+    <section lang={localeMeta.en.htmlLang}>
+      <h2>{en.pages.notFound.title}</h2>
+      <p>{en.pages.notFound.description}</p>
+      <a href={getLocalizedPath('home', 'en')}>{en.nav.home}</a>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: var(--space-2xl);
+    padding-block: var(--space-section);
+  }
+
+  .not-found section {
+    display: grid;
+    gap: var(--space-s);
+    justify-items: start;
+  }
+
+  .not-found h2 {
+    font-size: var(--step-4);
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import { Picture } from 'astro:assets';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import { images } from '@/data/images';
+import type { Locale } from '@/i18n/config';
+import type { getHomeContent } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  content: Awaited<ReturnType<typeof getHomeContent>>['experience'];
+}
+
+const { locale, content } = Astro.props;
+const photo = images.experiencia;
+---
+
+<section class="experience surface-mist" aria-labelledby="experience-title">
+  <div class="container experience__grid">
+    <div class="experience__media media-frame">
+      <Picture
+        src={photo.src}
+        alt={photo.alt[locale]}
+        widths={[480, 720, 960, 1200]}
+        sizes="(min-width: 60rem) 38vw, 100vw"
+        formats={['avif', 'webp']}
+      />
+    </div>
+
+    <div class="experience__content">
+      <SectionLabel number="03">{content.label}</SectionLabel>
+      <h2 id="experience-title">
+        <Emphasis text={content.title} />
+      </h2>
+      <ol class="steps" role="list">
+        {content.steps.map((step, index) => (
+          <li class="step">
+            <span class="step__number" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="step__title">{step.title}</h3>
+            <p class="step__text">{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience {
+    padding-block: var(--space-section);
+  }
+
+  .experience__grid {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .experience__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .experience__content {
+    display: grid;
+    gap: var(--space-m);
+    align-content: start;
+  }
+
+  .steps {
+    margin-top: var(--space-l);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: var(--space-s);
+    row-gap: 0.375rem;
+    padding-block: var(--space-m);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .step__number {
+    grid-row: span 2;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-style: italic;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .step__title {
+    font-size: var(--step-2);
+  }
+
+  .step__text {
+    color: var(--fg-muted);
+    max-width: 44ch;
+  }
+
+  @media (min-width: 60rem) {
+    .experience__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: start;
+    }
+
+    /* foto vertical e fixa enquanto os quatro momentos passam ao lado */
+    .experience__media {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-l));
+      grid-column: 1 / span 5;
+      aspect-ratio: 4 / 5;
+    }
+
+    .experience__content {
+      grid-column: 7 / span 6;
+      padding-top: var(--space-xl);
+    }
+
+    .step {
+      grid-template-columns: 4.5rem minmax(0, 1fr);
+      padding-block: var(--space-l);
+    }
+  }
+</style>

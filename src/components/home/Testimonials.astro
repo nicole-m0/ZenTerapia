@@ -1,0 +1,165 @@
+---
+import DemoNote from '@/components/ui/DemoNote.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import type { getHomeContent, getTestimonials } from '@/lib/content';
+
+interface Props {
+  content: Awaited<ReturnType<typeof getHomeContent>>['testimonials'];
+  testimonials: Awaited<ReturnType<typeof getTestimonials>>;
+}
+
+const { content, testimonials } = Astro.props;
+---
+
+<section class="testimonials container" aria-labelledby="testimonials-title">
+  <header class="testimonials__head">
+    <div class="testimonials__heading">
+      <SectionLabel number="04">{content.label}</SectionLabel>
+      <h2 id="testimonials-title">
+        <Emphasis text={content.title} />
+      </h2>
+      <DemoNote>{content.disclaimer}</DemoNote>
+    </div>
+  </header>
+
+  <div class="testimonials__grid">
+    {testimonials.map((item, index) => (
+      <figure class:list={['quote', index === 0 ? 'quote--lead' : 'quote--minor']}>
+        <blockquote>
+          <p>{item.quote}</p>
+        </blockquote>
+        <figcaption>
+          <span class="quote__name">{item.name}</span>
+          <span class="quote__detail">{item.detail}</span>
+          <span class="quote__demo">
+            <DemoNote as="span">{content.itemNote}</DemoNote>
+          </span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding-block: var(--space-section);
+  }
+
+  .testimonials__head {
+    display: grid;
+    gap: var(--space-m);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .testimonials__heading {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .quote__demo {
+    flex-basis: 100%;
+  }
+
+  .testimonials__grid {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .quote {
+    display: grid;
+    align-content: start;
+    align-self: start;
+    gap: var(--space-s);
+  }
+
+  .quote blockquote p {
+    font-family: var(--font-display);
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+
+  .quote--lead blockquote p {
+    position: relative;
+    font-size: var(--step-3);
+    line-height: 1.15;
+    max-width: 26ch;
+  }
+
+  /* aspas de abertura penduradas na margem, em argila */
+  .quote--lead blockquote p::before {
+    content: '“';
+    position: absolute;
+    right: 100%;
+    margin-right: 0.08em;
+    color: var(--accent);
+  }
+
+  .quote--minor blockquote p {
+    font-size: var(--step-1);
+    line-height: 1.35;
+    max-width: 34ch;
+  }
+
+  .quote figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    font-size: var(--step--1);
+  }
+
+  .quote__detail {
+    color: var(--fg-muted);
+  }
+
+  .quote__detail::before {
+    content: '';
+    display: inline-block;
+    width: 1.25rem;
+    height: 1px;
+    margin-right: 0.75rem;
+    vertical-align: middle;
+    background-color: var(--rule);
+  }
+
+  /* no celular as aspas penduradas sairiam da tela: ficam alinhadas ao texto */
+  @media (max-width: 39.99rem) {
+    .quote--lead blockquote p::before {
+      position: static;
+      margin-right: 0.05em;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .testimonials__head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: end;
+    }
+
+    .testimonials__heading {
+      grid-column: 1 / span 7;
+    }
+
+    .testimonials__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      row-gap: var(--space-2xl);
+    }
+
+    .quote--lead {
+      grid-column: 2 / span 9;
+    }
+
+    /* relatos menores escalonados: ritmo de página de revista, não grade */
+    .quote--minor:nth-child(2) {
+      grid-column: 4 / span 4;
+    }
+
+    .quote--minor:nth-child(3) {
+      grid-column: 9 / span 4;
+      margin-top: var(--space-3xl);
+    }
+  }
+</style>

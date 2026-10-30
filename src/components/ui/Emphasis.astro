@@ -1,0 +1,19 @@
+---
+/**
+ * Renderiza texto do conteúdo transformando `*trecho*` em <em>.
+ * O resto é texto puro (escapado), sem HTML vindo do conteúdo.
+ */
+interface Props {
+  text: string;
+}
+
+const parts = Astro.props.text.split(/(\*[^*]+\*)/g).filter(Boolean);
+---
+
+{parts.map((part) =>
+  part.length > 2 && part.startsWith('*') && part.endsWith('*') ? (
+    <em>{part.slice(1, -1)}</em>
+  ) : (
+    part
+  ),
+)}

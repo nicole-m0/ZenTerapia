@@ -1,0 +1,52 @@
+---
+/**
+ * Marca visual de conteúdo demonstrativo (persona, relatos, formação, valores).
+ * Um anel aberto em miniatura, o mesmo do símbolo, seguido de texto curto.
+ * Sempre visível e legível: não é um rodapé escondido.
+ */
+interface Props {
+  as?: 'p' | 'span';
+}
+
+const { as: Tag = 'p' } = Astro.props;
+---
+
+<Tag class="demo-note">
+  <svg
+    class="demo-note__mark"
+    width="14"
+    height="14"
+    viewBox="0 0 32 32"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      d="M25.53 10.5A11 11 0 1 1 21.5 6.47"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+    ></path>
+  </svg>
+  <span>
+    <slot />
+  </span>
+</Tag>
+
+<style>
+  .demo-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: none;
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--fg-muted);
+  }
+
+  .demo-note__mark {
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+</style>

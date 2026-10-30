@@ -1,0 +1,118 @@
+---
+import { localeMeta, locales, type Locale, type RouteKey } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+  /** Página atual; sem equivalente (ex.: 404), o seletor leva à home de cada idioma. */
+  route: RouteKey | null;
+  /** `short`: "PT / EN" (header). `full`: nomes por extenso (menu e footer). */
+  display?: 'short' | 'full';
+  orientation?: 'horizontal' | 'vertical';
+  class?: string;
+}
+
+const {
+  locale,
+  route,
+  display = 'short',
+  orientation = 'horizontal',
+  class: className,
+} = Astro.props;
+const t = useTranslations(locale);
+---
+
+<nav
+  class:list={['lang', `lang--${display}`, `lang--${orientation}`, className]}
+  aria-label={t.language.label}
+>
+  <ul role="list">
+    {locales.map((code) => {
+      const meta = localeMeta[code];
+      return (
+        <li>
+          <a
+            href={getLocalizedPath(route ?? 'home', code)}
+            lang={meta.htmlLang}
+            hreflang={meta.htmlLang}
+            aria-current={code === locale ? 'true' : undefined}
+          >
+            {display === 'short' ? (
+              <>
+                {meta.shortLabel}
+                <span class="visually-hidden"> — {meta.nativeName}</span>
+              </>
+            ) : (
+              meta.nativeName
+            )}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .lang ul {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  .lang a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .lang a:hover,
+  .lang a[aria-current='true'] {
+    color: var(--fg);
+  }
+
+  /* Curto: PT / EN, idioma ativo sublinhado */
+  .lang--short {
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  .lang--short li + li::before {
+    content: '/';
+    margin-inline: 0.5rem;
+    color: var(--rule);
+  }
+
+  .lang--short a {
+    padding-inline: 0.125rem;
+  }
+
+  .lang--short a[aria-current='true'] {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+  }
+
+  /* Por extenso: Português · English */
+  .lang--full ul {
+    gap: 1.25rem;
+  }
+
+  .lang--vertical ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .lang--full a[aria-current='true']::before {
+    content: '';
+    width: 0.375rem;
+    height: 0.375rem;
+    margin-inline-end: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--accent);
+  }
+</style>

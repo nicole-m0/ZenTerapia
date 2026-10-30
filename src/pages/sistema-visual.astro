@@ -1,0 +1,364 @@
+---
+/**
+ * Referência interna do sistema visual (noindex, fora do sitemap).
+ * Serve para revisar tokens e componentes isoladamente; pode ser removida
+ * antes da publicação ou mantida como peça de portfólio.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Logo from '@/components/brand/Logo.astro';
+import Button from '@/components/ui/Button.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
+
+const colors = [
+  { token: 'paper', hex: '#F4F3EE', role: 'Fundo principal', ratio: 'tinta 13.85' },
+  { token: 'mist', hex: '#E2E9EA', role: 'Superfície de respiro', ratio: 'tinta 12.52' },
+  { token: 'sage-100', hex: '#DCE3D3', role: 'Superfície de destaque', ratio: 'tinta 11.71' },
+  { token: 'sage-300', hex: '#B6C5AC', role: 'Detalhes, seleção', ratio: 'tinta 8.48' },
+  { token: 'moss', hex: '#2C3F33', role: 'Botão primário', ratio: 'papel 10.13', dark: true },
+  { token: 'ink', hex: '#1D2721', role: 'Texto, footer', ratio: 'papel 13.85', dark: true },
+  { token: 'stone', hex: '#585E57', role: 'Texto secundário', ratio: 'papel 5.99', dark: true },
+  { token: 'clay', hex: '#A35A3F', role: 'Acento (só detalhes)', ratio: 'papel 4.62', dark: true },
+];
+
+const typeScale = [
+  { step: '6', use: 'Hero' },
+  { step: '5', use: 'h1' },
+  { step: '4', use: 'h2' },
+  { step: '3', use: 'Destaque' },
+  { step: '2', use: 'h3' },
+  { step: '1', use: 'Lead' },
+  { step: '0', use: 'Texto' },
+  { step: '-1', use: 'Interface' },
+  { step: '-2', use: 'Rótulos' },
+];
+
+const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
+---
+
+<BaseLayout
+  locale="pt"
+  route={null}
+  title="Sistema visual"
+  description="Referência interna da identidade visual da Terapia Zen."
+  noindex
+>
+  <div class="container guide">
+    <header class="guide__intro">
+      <SectionLabel>Referência interna</SectionLabel>
+      <h1>
+        Sistema <em>visual</em>
+      </h1>
+      <p class="lead">
+        Cores, tipografia, espaçamento e componentes da Terapia Zen. O conceito é o respiro:
+        superfícies claras e frias, muito espaço negativo e um único acento quente.
+      </p>
+    </header>
+
+    <section class="guide__section" aria-labelledby="g-brand">
+      <SectionLabel number="01">Marca</SectionLabel>
+      <h2 id="g-brand">Símbolo e assinatura</h2>
+      <p class="muted">
+        Um anel aberto e um ponto na pausa: o instante entre inspirar e expirar. O mesmo ponto em
+        argila marca a página atual na navegação.
+      </p>
+      <div class="brand-row">
+        <div class="brand-tile">
+          <Logo />
+        </div>
+        <div class="brand-tile surface-mist">
+          <Logo />
+        </div>
+        <div class="brand-tile surface-dark">
+          <Logo />
+        </div>
+        <div class="brand-tile brand-tile--icon">
+          <img src="/favicon.svg" width="64" height="64" alt="Favicon da Terapia Zen" />
+        </div>
+      </div>
+    </section>
+
+    <section class="guide__section" aria-labelledby="g-color">
+      <SectionLabel number="02">Cor</SectionLabel>
+      <h2 id="g-color">Paleta</h2>
+      <p class="muted">
+        Contraste WCAG medido com o par de uso real; todos os textos passam em AA.
+      </p>
+      <ul class="swatches" role="list">
+        {colors.map((color) => (
+          <li class="swatch">
+            <span
+              class:list={['swatch__chip', { 'swatch__chip--dark': color.dark }]}
+              style={`background-color: ${color.hex}`}
+            />
+            <span class="swatch__name">{color.token}</span>
+            <span class="swatch__meta">
+              {color.hex} · {color.role}
+              <br />
+              Contraste com {color.ratio}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="guide__section" aria-labelledby="g-type">
+      <SectionLabel number="03">Tipografia</SectionLabel>
+      <h2 id="g-type">Instrument Serif &amp; Figtree</h2>
+      <p class="muted">
+        Serifada condensada e expressiva para títulos, com itálico como recurso de ênfase. Sans
+        humanista para leitura e interface. Escala fluida entre 375 e 1440 px.
+      </p>
+
+      <p class="display specimen">
+        Comece seu momento de <em>cuidado.</em>
+      </p>
+
+      <ol class="type-scale" role="list">
+        {typeScale.map(({ step, use }) => (
+          <li>
+            <span class="type-scale__meta">
+              step {step} · {use}
+            </span>
+            <span
+              class:list={['type-scale__sample', { display: Number(step) >= 2 }]}
+              style={`font-size: var(--step-${step})`}
+            >
+              Respirar, desacelerar, voltar a si
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="guide__section" aria-labelledby="g-components">
+      <SectionLabel number="04">Componentes</SectionLabel>
+      <h2 id="g-components">Botões, links e rótulos</h2>
+
+      <div class="component-grid">
+        <div class="component-tile">
+          <p class="eyebrow">Botões · papel</p>
+          <div class="component-row">
+            <Button href="#g-components" arrow>
+              Agendar uma sessão
+            </Button>
+            <Button href="#g-components" variant="secondary">
+              Conhecer os serviços
+            </Button>
+            <Button size="sm">Agendar</Button>
+          </div>
+        </div>
+        <div class="component-tile surface-dark">
+          <p class="eyebrow">Botões · superfície escura</p>
+          <div class="component-row">
+            <Button href="#g-components" arrow>
+              Agendar uma sessão
+            </Button>
+            <Button href="#g-components" variant="secondary">
+              Conhecer os serviços
+            </Button>
+          </div>
+        </div>
+        <div class="component-tile">
+          <p class="eyebrow">Links</p>
+          <div class="component-row">
+            <TextLink href="#g-components">Link de texto</TextLink>
+            <TextLink href="#g-components" arrow>
+              Conheça a abordagem
+            </TextLink>
+            <TextLink href="https://www.instagram.com/" external locale="pt">
+              Instagram
+            </TextLink>
+          </div>
+        </div>
+        <div class="component-tile surface-mist">
+          <p class="eyebrow">Indicadores de seção</p>
+          <div class="component-stack">
+            <SectionLabel number="01">Abordagem</SectionLabel>
+            <SectionLabel>Sem numeração</SectionLabel>
+          </div>
+        </div>
+        <div class="component-tile">
+          <p class="eyebrow">Seletor de idioma</p>
+          <div class="component-row">
+            <LanguageSwitcher locale="pt" route="home" />
+            <LanguageSwitcher locale="pt" route="home" display="full" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="guide__section" aria-labelledby="g-space">
+      <SectionLabel number="05">Espaço</SectionLabel>
+      <h2 id="g-space">Escala de espaçamento</h2>
+      <ol class="space-scale" role="list">
+        {spaces.map((space) => (
+          <li>
+            <span class="space-scale__name">{space}</span>
+            <span class="space-scale__bar" style={`width: var(--space-${space})`} />
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .guide {
+    padding-block: var(--space-2xl) var(--space-section);
+  }
+
+  .guide__intro {
+    display: grid;
+    gap: var(--space-m);
+    padding-bottom: var(--space-2xl);
+  }
+
+  .guide__section {
+    display: grid;
+    gap: var(--space-s);
+    padding-block: var(--space-2xl);
+    border-top: var(--border-hairline);
+  }
+
+  .guide__section h2 {
+    font-size: var(--step-3);
+  }
+
+  .brand-row,
+  .component-grid {
+    display: grid;
+    gap: var(--space-s);
+    margin-top: var(--space-m);
+  }
+
+  .brand-row {
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+
+  .brand-tile {
+    display: grid;
+    place-items: center;
+    min-height: 9rem;
+    border: var(--border-hairline);
+  }
+
+  .brand-tile.surface-dark,
+  .brand-tile.surface-mist {
+    border-color: transparent;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-m) var(--space-s);
+    margin-top: var(--space-m);
+  }
+
+  .swatch {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .swatch__chip {
+    aspect-ratio: 4 / 3;
+    margin-bottom: 0.5rem;
+    box-shadow: inset 0 0 0 1px rgb(29 39 33 / 0.08);
+  }
+
+  .swatch__name {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+  }
+
+  .swatch__meta {
+    font-size: var(--step--2);
+    color: var(--fg-muted);
+    line-height: 1.5;
+  }
+
+  .specimen {
+    margin-block: var(--space-xl) var(--space-l);
+    font-size: var(--step-6);
+    max-width: 14ch;
+  }
+
+  .type-scale {
+    display: grid;
+  }
+
+  .type-scale li {
+    display: grid;
+    gap: 0.25rem;
+    padding-block: var(--space-xs);
+    border-top: var(--border-hairline);
+  }
+
+  .type-scale__meta,
+  .space-scale__name {
+    font-size: var(--step--2);
+    color: var(--fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .type-scale__sample {
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .component-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  }
+
+  .component-tile {
+    display: grid;
+    align-content: start;
+    gap: var(--space-m);
+    padding: var(--space-l);
+    border: var(--border-hairline);
+  }
+
+  .component-tile.surface-dark,
+  .component-tile.surface-mist {
+    border-color: transparent;
+  }
+
+  .component-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-s) var(--space-m);
+  }
+
+  .component-stack {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  .space-scale {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-top: var(--space-m);
+  }
+
+  .space-scale li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    align-items: center;
+  }
+
+  .space-scale__bar {
+    height: 0.625rem;
+    background-color: var(--color-sage-300);
+  }
+
+  @media (min-width: 60rem) {
+    .type-scale li {
+      grid-template-columns: 12rem 1fr;
+      align-items: baseline;
+    }
+  }
+</style>

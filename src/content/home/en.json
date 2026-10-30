@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "eyebrow": "Integrative therapies · in person and online",
+    "title": "Care begins with a *pause*.",
+    "lead": "Somatic therapy, meditation, reiki and aromatherapy to slow down, listen to your body and find a rhythm that feels like your own.",
+    "secondaryCta": {
+      "label": "Explore the services"
+    },
+    "caption": "A morning without hurry.",
+    "facts": ["One-to-one sessions", "50 to 80 minutes", "In person and online"]
+  },
+  "intro": {
+    "label": "Approach",
+    "statement": "Each session is an unhurried space to notice what your body *already knows* and choose, calmly, what comes next.",
+    "body": [
+      "I am Helena Prado. I work with people who arrive tired of rushing, with a body asking for attention.",
+      "My work brings together integrative practices and careful listening. There is no set formula: every session starts from how you are that day."
+    ],
+    "link": {
+      "label": "About my approach"
+    },
+    "demoNote": "Helena Prado is a fictional character created for this demo."
+  },
+  "services": {
+    "label": "Services",
+    "title": "Four paths to the *same* pause.",
+    "intro": "Each practice has its own pace. In our first conversation, we find the one that fits where you are right now.",
+    "durationUnit": "min",
+    "link": {
+      "label": "Details and pricing"
+    }
+  },
+  "experience": {
+    "label": "The session",
+    "title": "What a session *feels* like",
+    "steps": [
+      {
+        "title": "Arriving",
+        "text": "A cup of tea, a few minutes of conversation and room to say how you are arriving."
+      },
+      {
+        "title": "Pausing",
+        "text": "Breath and body awareness, to leave the rush of the day at the door."
+      },
+      {
+        "title": "Practice",
+        "text": "The chosen technique, guided at your pace and adjusted whenever you need."
+      },
+      {
+        "title": "Integrating",
+        "text": "Time to come back slowly and talk about what the session left with you."
+      }
+    ]
+  },
+  "testimonials": {
+    "label": "Stories",
+    "title": "What *stays* with you",
+    "disclaimer": "Demo content: the stories and people below are fictional.",
+    "itemNote": "Fictional story"
+  },
+  "closing": {
+    "title": "Begin your moment of *care*.",
+    "text": "The first conversation comes with no commitment: tell me how you are and we'll decide together where to start.",
+    "whatsappCta": {
+      "label": "Chat on WhatsApp"
+    }
+  }
+}

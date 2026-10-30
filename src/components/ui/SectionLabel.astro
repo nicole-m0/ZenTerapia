@@ -1,0 +1,52 @@
+---
+/**
+ * Indicador editorial de seção: "01 ——— Abordagem".
+ * É um rótulo, não um título: o heading real da seção vem logo depois.
+ */
+interface Props {
+  number?: string;
+  class?: string;
+}
+
+const { number, class: className } = Astro.props;
+---
+
+<p class:list={['section-label', className]}>
+  {number && <span class="section-label__number">{number}</span>}
+  <span class="section-label__rule" aria-hidden="true"></span>
+  <span class="section-label__text">
+    <slot />
+  </span>
+</p>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    max-width: none;
+    color: var(--fg-muted);
+  }
+
+  .section-label__number {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .section-label__rule {
+    width: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.5;
+  }
+
+  .section-label__text {
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+</style>

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pt-ana",
+    "locale": "pt",
+    "order": 1,
+    "quote": "Saí da primeira sessão percebendo o quanto eu prendia a respiração. Hoje noto isso no meio do dia e consigo parar.",
+    "name": "Ana, 34",
+    "detail": "Terapia Somática"
+  },
+  {
+    "id": "pt-rafael",
+    "locale": "pt",
+    "order": 2,
+    "quote": "Eu achava que meditação não era para mim. A Helena tirou toda a cobrança e me ensinou a começar pequeno.",
+    "name": "Rafael, 41",
+    "detail": "Meditação Guiada"
+  },
+  {
+    "id": "pt-marta",
+    "locale": "pt",
+    "order": 3,
+    "quote": "É uma hora em que ninguém espera nada de mim. Volto para casa mais leve e mais presente.",
+    "name": "Marta, 58",
+    "detail": "Reiki"
+  },
+  {
+    "id": "en-ana",
+    "locale": "en",
+    "order": 1,
+    "quote": "I left my first session realising how often I was holding my breath. Now I notice it in the middle of the day, and I can stop.",
+    "name": "Ana, 34",
+    "detail": "Somatic Therapy"
+  },
+  {
+    "id": "en-rafael",
+    "locale": "en",
+    "order": 2,
+    "quote": "I thought meditation wasn't for me. Helena took all the pressure away and showed me how to start small.",
+    "name": "Rafael, 41",
+    "detail": "Guided Meditation"
+  },
+  {
+    "id": "en-marta",
+    "locale": "en",
+    "order": 3,
+    "quote": "It's one hour when nobody expects anything from me. I go home lighter and more present.",
+    "name": "Marta, 58",
+    "detail": "Reiki"
+  }
+]

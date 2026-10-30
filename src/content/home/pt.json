@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "eyebrow": "Terapias integrativas · presencial e online",
+    "title": "O cuidado começa na *pausa*.",
+    "lead": "Terapia somática, meditação, reiki e aromaterapia para desacelerar, perceber o corpo e reencontrar um ritmo que seja seu.",
+    "secondaryCta": {
+      "label": "Conhecer os serviços"
+    },
+    "caption": "Uma manhã sem pressa.",
+    "facts": ["Atendimento individual", "Sessões de 50 a 80 minutos", "Presencial e online"]
+  },
+  "intro": {
+    "label": "Abordagem",
+    "statement": "Cada sessão é um espaço sem pressa para perceber o que o corpo *já sabe* e escolher, com calma, o próximo passo.",
+    "body": [
+      "Sou Helena Prado. Acompanho pessoas que chegam cansadas de correr, com o corpo pedindo atenção.",
+      "Meu trabalho une práticas integrativas e escuta atenta. Não existe fórmula pronta: em cada encontro, partimos de como você está naquele dia."
+    ],
+    "link": {
+      "label": "Conheça a abordagem"
+    },
+    "demoNote": "Helena Prado é uma personagem fictícia, criada para esta demonstração."
+  },
+  "services": {
+    "label": "Serviços",
+    "title": "Quatro caminhos para a *mesma* pausa.",
+    "intro": "Cada prática tem o seu ritmo. Na primeira conversa, vemos juntos qual delas faz mais sentido para o seu momento.",
+    "durationUnit": "min",
+    "link": {
+      "label": "Ver detalhes e valores"
+    }
+  },
+  "experience": {
+    "label": "A sessão",
+    "title": "Como é um *encontro*",
+    "steps": [
+      {
+        "title": "Chegada",
+        "text": "Um chá, alguns minutos de conversa e espaço para contar como você está chegando."
+      },
+      {
+        "title": "Pausa",
+        "text": "Respiração e atenção ao corpo, para deixar a pressa do dia do lado de fora."
+      },
+      {
+        "title": "Prática",
+        "text": "A técnica escolhida, conduzida no seu tempo, com ajustes sempre que você precisar."
+      },
+      {
+        "title": "Integração",
+        "text": "Um momento para voltar devagar e conversar sobre o que ficou da sessão."
+      }
+    ]
+  },
+  "testimonials": {
+    "label": "Relatos",
+    "title": "O que fica *depois*",
+    "disclaimer": "Conteúdo demonstrativo: os relatos e as pessoas abaixo são fictícios.",
+    "itemNote": "Relato fictício"
+  },
+  "closing": {
+    "title": "Comece seu momento de *cuidado*.",
+    "text": "A primeira conversa é sem compromisso: conte como você está e escolhemos juntos por onde começar.",
+    "whatsappCta": {
+      "label": "Conversar pelo WhatsApp"
+    }
+  }
+}

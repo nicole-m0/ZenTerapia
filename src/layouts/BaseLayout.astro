@@ -1,0 +1,45 @@
+---
+import { Font } from 'astro:assets';
+import Footer from '@/components/layout/Footer.astro';
+import Header from '@/components/layout/Header.astro';
+import SeoHead from '@/components/layout/SeoHead.astro';
+import { localeMeta, type Locale, type RouteKey } from '@/i18n/config';
+import { useTranslations } from '@/i18n/utils';
+import '@/styles/global.css';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey | null;
+  title: string;
+  description: string;
+  noindex?: boolean;
+}
+
+const { locale, route, title, description, noindex = false } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<!doctype html>
+<html lang={localeMeta[locale].htmlLang}>
+  <head>
+    <SeoHead
+      locale={locale}
+      route={route}
+      title={title}
+      description={description}
+      noindex={noindex}
+    />
+    <Font cssVariable="--font-display-family" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-body-family" preload />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      {t.a11y.skipToContent}
+    </a>
+    <Header locale={locale} route={route} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer locale={locale} route={route} />
+  </body>
+</html>

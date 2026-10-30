@@ -1,0 +1,298 @@
+---
+/**
+ * Serviços como índice editorial (sem grade de cards).
+ * Desktop: painel de imagem fixo ao lado, que troca conforme o item em hover/foco
+ * usando só CSS (:has). Telas menores: miniatura em cada linha.
+ */
+import { Image, Picture } from 'astro:assets';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import Icon from '@/components/ui/Icon.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { getPhoto } from '@/data/images';
+import type { Locale } from '@/i18n/config';
+import { getLocalizedPath } from '@/i18n/utils';
+import type { getHomeContent, getServices } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  content: Awaited<ReturnType<typeof getHomeContent>>['services'];
+  services: Awaited<ReturnType<typeof getServices>>;
+}
+
+const { locale, content, services } = Astro.props;
+const servicesPath = getLocalizedPath('services', locale);
+const items = services.map((service, index) => ({
+  ...service,
+  number: String(index + 1).padStart(2, '0'),
+  photo: getPhoto(service.image),
+}));
+---
+
+<section class="services" aria-labelledby="services-title">
+  <div class="container">
+    <header class="services__head">
+      <div class="services__heading">
+        <SectionLabel number="02">{content.label}</SectionLabel>
+        <h2 id="services-title">
+          <Emphasis text={content.title} />
+        </h2>
+      </div>
+      <p class="services__intro">{content.intro}</p>
+    </header>
+
+    <div class="services__body">
+      <ol class="services__list" role="list">
+        {items.map((item) => (
+          <li class="service">
+            <a class="service__link" href={`${servicesPath}#${item.anchor}`}>
+              <span class="service__number" aria-hidden="true">
+                {item.number}
+              </span>
+              <span class="service__main">
+                <h3 class="service__title">{item.title}</h3>
+                <span class="service__summary">{item.summary}</span>
+                <span class="service__duration">
+                  {item.durationMinutes} {content.durationUnit}
+                </span>
+              </span>
+              <span class="service__thumb media-frame">
+                <Image
+                  src={item.photo.src}
+                  alt=""
+                  widths={[160, 240]}
+                  sizes="5rem"
+                  style={
+                    item.photo.position ? `object-position: ${item.photo.position}` : undefined
+                  }
+                />
+              </span>
+              <Icon name="arrow-right" size={22} class="service__arrow" />
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <div class="services__preview media-frame" aria-hidden="true">
+        {items.map((item) => (
+          <Picture
+            src={item.photo.src}
+            alt=""
+            widths={[480, 720, 960]}
+            sizes="30vw"
+            formats={['avif', 'webp']}
+            style={item.photo.position ? `object-position: ${item.photo.position}` : undefined}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div class="services__more">
+      <TextLink href={servicesPath} arrow>
+        {content.link.label}
+      </TextLink>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding-block: var(--space-section);
+  }
+
+  .services__head {
+    display: grid;
+    gap: var(--space-m);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .services__heading {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .services__heading h2 {
+    max-width: 14ch;
+  }
+
+  .services__intro {
+    max-width: 38ch;
+    color: var(--fg-muted);
+  }
+
+  .services__list {
+    border-bottom: var(--border-hairline);
+  }
+
+  .service {
+    border-top: var(--border-hairline);
+  }
+
+  .service__link {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--space-s);
+    padding-block: var(--space-m);
+    text-decoration: none;
+  }
+
+  .service__number {
+    padding-top: 0.6rem;
+    font-family: var(--font-display);
+    font-size: var(--step-0);
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .service__main {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .service__title {
+    font-size: var(--step-3);
+    line-height: 1.1;
+    transition:
+      translate var(--duration-base) var(--ease-out),
+      color var(--duration-base) var(--ease-out);
+  }
+
+  .service__summary {
+    max-width: 46ch;
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+  }
+
+  .service__duration {
+    margin-top: 0.25rem;
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .service__thumb {
+    width: 4.5rem;
+    aspect-ratio: 1;
+  }
+
+  .service__link :global(.service__arrow) {
+    display: none;
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .service__link:hover .service__title,
+  .service__link:focus-visible .service__title {
+    translate: 0.5rem 0;
+    color: var(--color-moss);
+  }
+
+  .service__link:hover :global(.service__arrow),
+  .service__link:focus-visible :global(.service__arrow) {
+    translate: 0.375rem 0;
+  }
+
+  .services__preview {
+    display: none;
+  }
+
+  .services__more {
+    margin-top: var(--space-xl);
+  }
+
+  @media (min-width: 60rem) {
+    .services__head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: end;
+    }
+
+    .services__heading {
+      grid-column: 1 / span 7;
+    }
+
+    .services__intro {
+      grid-column: 9 / span 4;
+    }
+
+    .services__body {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: start;
+    }
+
+    .services__list {
+      grid-column: 1 / span 7;
+    }
+
+    .service__link {
+      grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+      align-items: center;
+      padding-block: var(--space-l);
+    }
+
+    .service__number {
+      padding-top: 0;
+      align-self: start;
+      padding-block-start: 0.9rem;
+    }
+
+    .service__title {
+      font-size: var(--step-4);
+    }
+
+    .service__thumb {
+      display: none;
+    }
+
+    .service__link :global(.service__arrow) {
+      display: block;
+    }
+
+    /* Painel de imagem: acompanha a lista e troca com o item ativo */
+    .services__preview {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-l));
+      display: grid;
+      grid-column: 9 / span 4;
+      aspect-ratio: 4 / 5;
+    }
+
+    .services__preview > :global(picture) {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transition: opacity var(--duration-slow) var(--ease-out);
+    }
+
+    .services__preview > :global(picture:first-child) {
+      opacity: 1;
+    }
+
+    .services__body:has(.service:not(:first-child) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:first-child) {
+      opacity: 0;
+    }
+
+    .services__body:has(.service:nth-child(2) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:nth-child(2)),
+    .services__body:has(.service:nth-child(3) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:nth-child(3)),
+    .services__body:has(.service:nth-child(4) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:nth-child(4)),
+    .services__body:has(.service:nth-child(5) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:nth-child(5)),
+    .services__body:has(.service:nth-child(6) .service__link:is(:hover, :focus-visible))
+      .services__preview
+      > :global(picture:nth-child(6)) {
+      opacity: 1;
+    }
+  }
+</style>

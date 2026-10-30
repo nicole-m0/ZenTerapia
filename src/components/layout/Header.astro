@@ -1,0 +1,168 @@
+---
+import Logo from '@/components/brand/Logo.astro';
+import Button from '@/components/ui/Button.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import MobileMenu from './MobileMenu.astro';
+import { getPrimaryNav } from './navigation';
+import type { Locale, RouteKey } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey | null;
+}
+
+const { locale, route } = Astro.props;
+const t = useTranslations(locale);
+const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home');
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a
+      class="site-header__brand"
+      href={getLocalizedPath('home', locale)}
+      aria-current={route === 'home' ? 'page' : undefined}
+    >
+      <Logo />
+    </a>
+
+    <nav class="site-header__nav" aria-label={t.nav.mainLabel}>
+      <ul role="list">
+        {desktopNav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={item.route === route ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <div class="site-header__lang">
+        <LanguageSwitcher locale={locale} route={route} />
+      </div>
+      <Button href={getLocalizedPath('contact', locale)} size="sm">
+        <span class="label-long">{t.nav.book}</span>
+        <span class="label-short">{t.nav.bookShort}</span>
+      </Button>
+      <MobileMenu locale={locale} route={route} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background-color: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+  }
+
+  /* Filete inferior aparece ao rolar, só com CSS (scroll-driven animation) */
+  @supports (animation-timeline: scroll()) {
+    .site-header {
+      animation: header-rule linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 6rem;
+    }
+
+    @keyframes header-rule {
+      to {
+        border-bottom-color: var(--color-line);
+      }
+    }
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: var(--header-height);
+  }
+
+  .site-header__brand {
+    margin-inline-end: auto;
+    text-decoration: none;
+  }
+
+  .site-header__nav {
+    display: none;
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    gap: clamp(1.5rem, 0.5rem + 2vw, 2.75rem);
+  }
+
+  .site-header__nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .site-header__nav a:hover,
+  .site-header__nav a[aria-current='page'] {
+    color: var(--fg);
+  }
+
+  /* Página atual: o mesmo ponto em argila do símbolo da marca */
+  .site-header__nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.125rem;
+    width: 0.3125rem;
+    height: 0.3125rem;
+    border-radius: 50%;
+    background-color: var(--accent);
+    translate: -50% 0;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .site-header__lang {
+    display: none;
+  }
+
+  .label-long {
+    display: none;
+  }
+
+  @media (min-width: 40rem) {
+    .label-long {
+      display: inline;
+    }
+
+    .label-short {
+      display: none;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .site-header__nav,
+    .site-header__lang {
+      display: block;
+    }
+
+    .site-header__inner {
+      gap: var(--space-m);
+    }
+
+    .site-header__actions {
+      gap: var(--space-m);
+    }
+  }
+</style>

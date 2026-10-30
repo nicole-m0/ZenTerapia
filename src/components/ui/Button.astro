@@ -1,0 +1,124 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Com `href` vira link; sem, vira `<button>`. */
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'secondary';
+  size?: 'md' | 'sm';
+  /** Seta que avança no hover. */
+  arrow?: boolean;
+  fullWidth?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
+  arrow = false,
+  fullWidth = false,
+  class: className,
+} = Astro.props;
+
+const classes = [
+  'button',
+  `button--${variant}`,
+  `button--${size}`,
+  { 'button--full': fullWidth },
+  className,
+];
+---
+
+{href ? (
+  <a href={href} class:list={classes}>
+    <span class="button__label">
+      <slot />
+    </span>
+    {arrow && <Icon name="arrow-right" class="button__arrow" />}
+  </a>
+) : (
+  <button type={type} class:list={classes}>
+    <span class="button__label">
+      <slot />
+    </span>
+    {arrow && <Icon name="arrow-right" class="button__arrow" />}
+  </button>
+)}
+
+<style>
+  .button {
+    --button-bg: transparent;
+    --button-fg: var(--fg);
+    --button-border: currentColor;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.625rem;
+    border: 1px solid var(--button-border);
+    border-radius: var(--radius-pill);
+    background-color: var(--button-bg);
+    color: var(--button-fg);
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out),
+      color var(--duration-base) var(--ease-out);
+  }
+
+  .button--sm {
+    min-height: 2.5rem;
+    padding: 0.5rem 1.125rem;
+  }
+
+  .button--full {
+    width: 100%;
+  }
+
+  .button--primary {
+    --button-bg: var(--color-moss);
+    --button-fg: var(--color-paper);
+    --button-border: var(--color-moss);
+  }
+
+  .button--primary:hover {
+    --button-bg: var(--color-moss-hover);
+    --button-border: var(--color-moss-hover);
+  }
+
+  .button--secondary:hover {
+    --button-bg: color-mix(in srgb, var(--fg) 7%, transparent);
+  }
+
+  /* Em superfície escura o primário inverte: papel com texto em tinta */
+  :global(.surface-dark) .button--primary {
+    --button-bg: var(--color-paper);
+    --button-fg: var(--color-ink);
+    --button-border: var(--color-paper);
+  }
+
+  :global(.surface-dark) .button--primary:hover {
+    --button-bg: var(--color-sage-100);
+    --button-border: var(--color-sage-100);
+  }
+
+  .button :global(.button__arrow) {
+    margin-inline-end: -0.25rem;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .button:hover :global(.button__arrow) {
+    transform: translateX(3px);
+  }
+</style>

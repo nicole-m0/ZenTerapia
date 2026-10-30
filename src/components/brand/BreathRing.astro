@@ -1,0 +1,35 @@
+---
+/**
+ * Anel de respiração: o símbolo da marca em escala de composição.
+ * Decorativo. Ocupa a largura do elemento pai, que define tamanho e posição.
+ */
+---
+
+<span class="breath-ring" aria-hidden="true"></span>
+
+<style>
+  .breath-ring {
+    --ring-color: color-mix(in srgb, var(--color-moss) 38%, transparent);
+
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--ring-color);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* o ponto na pausa, a 45° como no símbolo */
+  .breath-ring::after {
+    content: '';
+    position: absolute;
+    top: 14.64%;
+    left: 85.36%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--color-clay);
+    translate: -50% -50%;
+  }
+</style>

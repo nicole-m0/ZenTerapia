@@ -1,0 +1,292 @@
+---
+/**
+ * Menu mobile em <dialog> modal: foco preso, Esc e fundo inerte são nativos.
+ * Os botões usam Invoker Commands (commandfor/command), que funcionam sem JS;
+ * o script abaixo só cobre navegadores que ainda não os suportam.
+ */
+import Logo from '@/components/brand/Logo.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { getPrimaryNav } from './navigation';
+import { site } from '@/data/site';
+import type { Locale, RouteKey } from '@/i18n/config';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+  route: RouteKey | null;
+}
+
+const { locale, route } = Astro.props;
+const t = useTranslations(locale);
+const nav = getPrimaryNav(locale);
+const { whatsapp, instagram, email } = site.contact;
+---
+
+<button
+  class="menu-toggle"
+  type="button"
+  commandfor="site-menu"
+  command="show-modal"
+  aria-haspopup="dialog"
+>
+  <span>{t.menu.open}</span>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M3 9h18M10 15h11"></path>
+  </svg>
+</button>
+
+<dialog id="site-menu" class="site-menu surface-mist" aria-label={t.menu.dialogLabel}>
+  <div class="container site-menu__inner">
+    <div class="site-menu__top">
+      <Logo />
+      <button class="menu-close" type="button" commandfor="site-menu" command="close">
+        <span>{t.menu.close}</span>
+        <Icon name="close" size={18} />
+      </button>
+    </div>
+
+    <nav class="site-menu__nav" aria-label={t.nav.mainLabel}>
+      <ol role="list">
+        {nav.map((item, index) => (
+          <li style={`--i: ${index}`}>
+            <a href={item.href} aria-current={item.route === route ? 'page' : undefined}>
+              <span class="site-menu__index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="site-menu__label">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="site-menu__footer">
+      <Button href={getLocalizedPath('contact', locale)} fullWidth arrow>
+        {t.nav.book}
+      </Button>
+      <div class="site-menu__meta">
+        <LanguageSwitcher locale={locale} route={route} display="full" />
+        <ul class="site-menu__contacts" role="list">
+          <li>
+            <a href={whatsapp.href} target="_blank" rel="noopener noreferrer">
+              WhatsApp<span class="visually-hidden"> {t.a11y.opensInNewTab}</span>
+            </a>
+          </li>
+          <li>
+            <a href={instagram.href} target="_blank" rel="noopener noreferrer">
+              Instagram<span class="visually-hidden"> {t.a11y.opensInNewTab}</span>
+            </a>
+          </li>
+          <li>
+            <a href={email.href}>E-mail</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const supportsInvokers = 'command' in HTMLButtonElement.prototype;
+  const menu = document.getElementById('site-menu');
+
+  if (menu instanceof HTMLDialogElement) {
+    if (!supportsInvokers) {
+      document.addEventListener('click', (event) => {
+        const trigger = (event.target as Element | null)?.closest('button[commandfor="site-menu"]');
+        if (!trigger) return;
+        if (trigger.getAttribute('command') === 'show-modal') menu.showModal();
+        else menu.close();
+      });
+    }
+
+    // Ao passar para o layout desktop, o menu mobile deixa de fazer sentido.
+    window.matchMedia('(min-width: 60rem)').addEventListener('change', (event) => {
+      if (event.matches && menu.open) menu.close();
+    });
+  }
+</script>
+
+<style>
+  .menu-toggle,
+  .menu-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--fg);
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+
+  @media (min-width: 60rem) {
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  /* ---------- Painel ---------- */
+
+  .site-menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--fg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    translate: 0 -0.75rem;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .site-menu[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  @starting-style {
+    .site-menu[open] {
+      opacity: 0;
+      translate: 0 -0.75rem;
+    }
+  }
+
+  .site-menu::backdrop {
+    background: transparent;
+  }
+
+  .site-menu__inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: var(--space-l);
+  }
+
+  .site-menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--header-height);
+  }
+
+  .site-menu__nav {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-block: var(--space-xl);
+  }
+
+  .site-menu__nav ol {
+    width: 100%;
+  }
+
+  .site-menu__nav li {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .site-menu__nav a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-s);
+    padding-block: var(--space-xs);
+    text-decoration: none;
+  }
+
+  .site-menu__index {
+    min-width: 1.75rem;
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--fg-muted);
+  }
+
+  .site-menu__label {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.5rem + 5vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display);
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .site-menu__nav a:hover .site-menu__label {
+    translate: 0.375rem 0;
+  }
+
+  .site-menu__nav a[aria-current='page'] .site-menu__label {
+    font-style: italic;
+  }
+
+  .site-menu__nav a[aria-current='page'] .site-menu__index {
+    color: var(--accent);
+  }
+
+  /* Entrada escalonada e curta dos itens */
+  .site-menu[open] .site-menu__nav li {
+    animation: menu-item var(--duration-slow) var(--ease-out) both;
+    animation-delay: calc(60ms + var(--i) * 45ms);
+  }
+
+  @keyframes menu-item {
+    from {
+      opacity: 0;
+      translate: 0 0.5rem;
+    }
+  }
+
+  .site-menu__footer {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .site-menu__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-m);
+    font-size: var(--step--1);
+  }
+
+  .site-menu__contacts {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .site-menu__contacts a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    color: var(--fg-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  }
+
+  .site-menu__contacts a:hover {
+    color: var(--fg);
+  }
+</style>

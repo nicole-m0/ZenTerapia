@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  href: string;
+  /** Seta de avanço (links internos de ação, ex.: "Conheça os serviços"). */
+  arrow?: boolean;
+  /** Abre em nova aba e anuncia isso para leitores de tela. */
+  external?: boolean;
+  /** Obrigatório com `external`, para o aviso de nova aba no idioma certo. */
+  locale?: Locale;
+  class?: string;
+}
+
+const { href, arrow = false, external = false, locale, class: className } = Astro.props;
+const newTabNotice = external && locale ? useTranslations(locale).a11y.opensInNewTab : null;
+---
+
+<a
+  href={href}
+  class:list={['text-link', className]}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+>
+  <span class="text-link__label">
+    <slot />
+  </span>
+  {newTabNotice && <span class="visually-hidden">{newTabNotice}</span>}
+  {arrow && <Icon name="arrow-right" size={16} class="text-link__icon" />}
+  {external && <Icon name="arrow-up-right" size={14} class="text-link__icon" />}
+</a>
+
+<style>
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  /*
+   * Sublinhado em duas camadas: um traço discreto sempre visível (affordance)
+   * e um traço na cor do texto que se desenha da esquerda no hover/foco.
+   */
+  .text-link__label {
+    padding-bottom: 0.125em;
+    background-image:
+      linear-gradient(currentColor, currentColor), linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position:
+      0 100%,
+      0 100%;
+    background-size:
+      0% 1px,
+      100% 1px;
+    transition: background-size var(--duration-slow) var(--ease-out);
+  }
+
+  .text-link:hover .text-link__label,
+  .text-link:focus-visible .text-link__label {
+    background-size:
+      100% 1px,
+      100% 1px;
+  }
+
+  .text-link :global(.text-link__icon) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .text-link:hover :global(.text-link__icon) {
+    transform: translateX(3px);
+  }
+
+  .text-link[target='_blank']:hover :global(.text-link__icon) {
+    transform: translate(2px, -2px);
+  }
+</style>
