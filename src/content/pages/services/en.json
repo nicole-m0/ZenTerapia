@@ -1,0 +1,54 @@
+{
+  "head": {
+    "eyebrow": "Services",
+    "title": "Four practices,|one *pause*.",
+    "lead": "Every session is one-to-one and begins with a conversation. If you are not sure which to choose, that first conversation is exactly what it is for.",
+    "indexLabel": "Practices on this page"
+  },
+  "priceNote": "Fictional prices, for demonstration only.",
+  "labels": {
+    "forWhom": "Who it is for",
+    "session": "How the session goes",
+    "note": "Good to know",
+    "duration": "Length",
+    "format": "Format",
+    "price": "Price",
+    "minutes": "min",
+    "book": "Book this practice"
+  },
+  "faq": {
+    "label": "Questions",
+    "title": "Before your *first* session",
+    "items": [
+      {
+        "question": "How do I choose the right practice?",
+        "answer": "You do not need to arrive with a decision. In a free first conversation of up to 20 minutes, we talk about where you are and choose together where to begin."
+      },
+      {
+        "question": "Do I need any experience with meditation or integrative therapies?",
+        "answer": "No. Every practice is guided step by step and adapted to your pace, including for people who have never tried any of them."
+      },
+      {
+        "question": "Do online sessions work?",
+        "answer": "Guided meditation works very well over video. Practices that involve touch, such as somatic therapy, reiki and aromatherapy, take place in person only."
+      },
+      {
+        "question": "How often should I come?",
+        "answer": "It depends on what you are looking for. Many people start with weekly sessions for a month and then space them out. Nothing is sold as a package: you decide each time."
+      },
+      {
+        "question": "What if I need to cancel?",
+        "answer": "Just let us know 24 hours in advance to reschedule at no cost."
+      },
+      {
+        "question": "Do these practices replace medical or psychological treatment?",
+        "answer": "No. Integrative practices complement, and do not replace, medical or psychological care. If you are in treatment, it remains your main reference."
+      }
+    ]
+  },
+  "closing": {
+    "title": "Still *unsure*?",
+    "text": "Tell us how you are arriving. In the first conversation, we choose together the practice that makes the most sense right now.",
+    "whatsappCta": { "label": "Chat on WhatsApp" }
+  }
+}

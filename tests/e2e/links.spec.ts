@@ -28,8 +28,7 @@ test.describe('links internos', () => {
         broken.push(`${href} → ${response.status()}`);
         continue;
       }
-      // âncoras de serviço só passam a existir na página de serviços (Etapa 4)
-      if (hash && !/\/(servicos|services)\/$/.test(path)) {
+      if (hash) {
         const html = await response.text();
         if (!html.includes(`id="${hash}"`)) broken.push(`${href} → âncora ausente`);
       }

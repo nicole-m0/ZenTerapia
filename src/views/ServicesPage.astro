@@ -1,7 +1,18 @@
 ---
+/**
+ * Serviços: um índice desenhado como janela de texto (cada vidraça leva a
+ * uma prática), as fichas das práticas e as dúvidas antes da primeira sessão.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import ClosingCta from '@/components/home/ClosingCta.astro';
+import ServiceEntry from '@/components/services/ServiceEntry.astro';
+import DemoNote from '@/components/ui/DemoNote.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import SectionLabel from '@/components/ui/SectionLabel.astro';
+import LightCast from '@/components/window/LightCast.astro';
 import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/utils';
+import { getServices, getServicesPageContent } from '@/lib/content';
 
 interface Props {
   locale: Locale;
@@ -9,17 +20,375 @@ interface Props {
 
 const { locale } = Astro.props;
 const page = useTranslations(locale).pages.services;
+const [content, services] = await Promise.all([
+  getServicesPageContent(locale),
+  getServices(locale),
+]);
+const lines = content.head.title.split('|');
+const pad = (value: number) => String(value).padStart(2, '0');
 ---
 
 <BaseLayout locale={locale} route="services" title={page.title} description={page.description}>
-  {/* Conteúdo da página nas próximas etapas. */}
-  <div class="container page-stub">
-    <h1>{page.title}</h1>
+  <header class="services-head">
+    <div class="container services-head__inner">
+      <LightCast class="services-head__light" motion="load" cols={[1, 1, 1, 1]} rows={[1]} soft />
+      <p class="eyebrow services-head__eyebrow">{content.head.eyebrow}</p>
+      <h1 class="services-head__title">
+        {lines.map((line) => (
+          <span class="services-head__line">
+            <Emphasis text={line} />{' '}
+          </span>
+        ))}
+      </h1>
+      <p class="lead services-head__lead">{content.head.lead}</p>
+
+      <nav class="services-index" aria-label={content.head.indexLabel}>
+        <ol class="services-index__panes" role="list">
+          {services.map((service, index) => (
+            <li>
+              <a class="services-index__link" href={`#${service.anchor}`}>
+                <span class="services-index__number" aria-hidden="true">
+                  {pad(index + 1)}
+                </span>
+                <span class="services-index__name">{service.title}</span>
+                <span class="services-index__meta">
+                  {service.durationMinutes} {content.labels.minutes} · {service.format}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <span class="services-index__sill" aria-hidden="true"></span>
+      </nav>
+      <div>
+        <DemoNote>{content.priceNote}</DemoNote>
+      </div>
+    </div>
+  </header>
+
+  <div class="container services-list">
+    {services.map((service, index) => (
+      <ServiceEntry
+        locale={locale}
+        service={service}
+        labels={content.labels}
+        index={index}
+        total={services.length}
+      />
+    ))}
   </div>
+
+  <section class="faq" aria-labelledby="faq-title">
+    <div class="container faq__inner">
+      <div class="faq__heading">
+        <SectionLabel>{content.faq.label}</SectionLabel>
+        <h2 id="faq-title" class="faq__title">
+          <Emphasis text={content.faq.title} />
+        </h2>
+      </div>
+      <div class="faq__list">
+        {content.faq.items.map((item) => (
+          <details class="faq__item">
+            <summary class="faq__question">
+              <span>{item.question}</span>
+              <span class="faq__latch" aria-hidden="true"></span>
+            </summary>
+            <p class="faq__answer">{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta locale={locale} content={content.closing} />
 </BaseLayout>
 
 <style>
-  .page-stub {
+  /* ---------- Cabeçalho ---------- */
+
+  .services-head {
+    overflow: clip;
+  }
+
+  .services-head__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m);
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  .services-head__inner > :not(:first-child) {
+    position: relative;
+  }
+
+  /* a janela de quatro folhas projetada na parede, atrás do título */
+  .services-head__inner :global(.services-head__light) {
+    position: absolute;
+    top: 2rem;
+    right: -12%;
+    width: 78%;
+    height: 18rem;
+  }
+
+  .services-head__title {
+    font-size: var(--step-caps);
+  }
+
+  .services-head__line {
+    display: block;
+  }
+
+  .services-head__line:nth-child(2) {
+    padding-inline-start: 0.5em;
+  }
+
+  .services-head__lead {
+    max-width: 38ch;
+  }
+
+  /* ---------- Índice: uma janela cujas vidraças são as práticas ---------- */
+
+  .services-index {
+    position: relative;
+    margin-top: var(--space-l);
+  }
+
+  .services-index__panes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--bar);
+    padding: var(--bar);
+    background-color: var(--color-frame);
+  }
+
+  .services-index__link {
+    display: grid;
+    align-content: space-between;
+    gap: var(--space-s);
+    min-height: 9.5rem;
+    height: 100%;
+    padding: var(--space-s);
+    color: var(--color-ink);
+    text-decoration: none;
+    background-color: var(--color-dim);
+    box-shadow: var(--shadow-reveal);
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
+
+  .services-index__link:hover {
+    background-color: var(--color-light);
+  }
+
+  .services-index__link:focus-visible {
+    outline: 3px solid var(--color-light);
+    outline-offset: -6px;
+  }
+
+  .services-index__number {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    line-height: 1;
+    color: var(--color-frame);
+  }
+
+  .services-index__name {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .services-index__meta {
+    font-size: var(--step--2);
+    color: var(--color-stone);
+  }
+
+  .services-index__sill {
+    display: block;
+    height: calc(var(--bar) * 1.5);
+    margin-inline: calc(var(--bar) * -1.75);
+    background-color: var(--color-frame);
+    box-shadow: var(--shadow-wall);
+  }
+
+  /* ---------- Lista de práticas ---------- */
+
+  /* no celular o peitoril da janela passa da borda da tela: é cortado aqui */
+  .services-list {
+    overflow-x: clip;
+    display: grid;
+    gap: var(--space-section);
+    padding-block: var(--space-2xl) var(--space-section);
+  }
+
+  /* ---------- Dúvidas ---------- */
+
+  .faq {
     padding-block: var(--space-section);
+    border-top: var(--border-hairline);
+  }
+
+  .faq__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .faq__heading {
+    display: grid;
+    align-content: start;
+    gap: var(--space-m);
+  }
+
+  .faq__title {
+    font-size: var(--step-4);
+    max-width: 14ch;
+  }
+
+  .faq__item {
+    border-bottom: var(--border-hairline);
+  }
+
+  .faq__item:first-child {
+    border-top: var(--border-hairline);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding-block: var(--space-s);
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.2;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question:focus-visible {
+    outline-offset: 4px;
+  }
+
+  /*
+   * Trinco: uma cruz de montantes. Ao abrir, o montante vertical recolhe
+   * e sobra só a travessa.
+   */
+  .faq__latch {
+    position: relative;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .faq__latch::before,
+  .faq__latch::after {
+    content: '';
+    position: absolute;
+    background-color: var(--color-frame);
+    transition: scale var(--duration-base) var(--ease-out);
+  }
+
+  .faq__latch::before {
+    top: calc(50% - 2px);
+    left: 0;
+    width: 100%;
+    height: 4px;
+  }
+
+  .faq__latch::after {
+    top: 0;
+    left: calc(50% - 2px);
+    width: 4px;
+    height: 100%;
+  }
+
+  .faq__item[open] .faq__latch::after {
+    scale: 1 0;
+  }
+
+  .faq__answer {
+    max-width: 58ch;
+    padding-bottom: var(--space-m);
+    color: var(--fg-muted);
+  }
+
+  /* ---------- Tablet ---------- */
+
+  @media (min-width: 40rem) {
+    .services-index__link {
+      min-height: 11rem;
+    }
+
+    .services-index__name {
+      font-size: var(--step-2);
+    }
+  }
+
+  /* ---------- Desktop ---------- */
+
+  @media (min-width: 60rem) {
+    .services-head__inner {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      padding-block: var(--space-3xl) var(--space-2xl);
+    }
+
+    .services-head__inner > * {
+      grid-column: 1 / -1;
+    }
+
+    .services-head__inner :global(.services-head__light) {
+      top: 1rem;
+      right: 2%;
+      width: 40%;
+      height: 22rem;
+    }
+
+    .services-head__inner .services-head__eyebrow,
+    .services-head__inner .services-head__title {
+      grid-column: 1 / span 8;
+    }
+
+    .services-head__inner .services-head__lead {
+      grid-column: 9 / -1;
+      grid-row: 2;
+      align-self: end;
+    }
+
+    .services-index {
+      margin-top: var(--space-xl);
+    }
+
+    .services-index__panes {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .services-index__link {
+      min-height: 13rem;
+      padding: var(--space-m);
+    }
+
+    .faq__inner {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+    }
+
+    .faq__heading {
+      grid-column: 1 / span 4;
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-l));
+      align-self: start;
+    }
+
+    .faq__list {
+      grid-column: 6 / -1;
+    }
   }
 </style>

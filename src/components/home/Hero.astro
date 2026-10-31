@@ -106,13 +106,20 @@ const lines = content.title.split('|');
 
   /* ---------- Luz projetada ---------- */
 
+  /*
+   * Luz de janela de verdade: montantes projetados mais largos, bordas em
+   * penumbra e intensidade que cai à medida que se afasta da janela.
+   */
   .hero__inner :global(.hero__light) {
     position: absolute;
     z-index: 0;
-    top: calc(clamp(25rem, 112vw, 34rem) + var(--space-l));
-    left: 8%;
-    width: 78%;
-    height: 24rem;
+    top: calc(clamp(25rem, 112vw, 34rem) + var(--space-xl));
+    left: 14%;
+    width: 64%;
+    height: 18rem;
+    gap: calc(var(--bar) * 2);
+    filter: blur(clamp(2.5px, 0.1rem + 0.15vw, 4.5px));
+    mask-image: linear-gradient(to bottom left, #000 45%, rgb(0 0 0 / 0.6) 75%, rgb(0 0 0 / 0.15));
   }
 
   /* ---------- Texto ---------- */
@@ -122,12 +129,18 @@ const lines = content.title.split('|');
     z-index: 1;
     display: grid;
     justify-items: start;
-    gap: var(--space-m);
+    gap: var(--space-l);
     padding-top: var(--space-2xl);
   }
 
+  .hero__text .eyebrow {
+    margin-bottom: calc(var(--space-s) - var(--space-l));
+  }
+
+  /* um pouco mais de entrelinha que os outros títulos: a cedilha não toca a linha seguinte */
   .hero__title {
     font-size: var(--step-hero);
+    line-height: 1;
   }
 
   .hero__line {
@@ -136,11 +149,11 @@ const lines = content.title.split('|');
 
   /* a segunda linha entra recuada, como um degrau de luz */
   .hero__line:nth-child(2) {
-    padding-inline-start: 0.75em;
+    padding-inline-start: 0.5em;
   }
 
   .hero__lead {
-    max-width: 30ch;
+    max-width: 34ch;
   }
 
   .hero__actions {
@@ -148,7 +161,6 @@ const lines = content.title.split('|');
     justify-items: start;
     gap: var(--space-m);
     width: 100%;
-    margin-top: var(--space-2xs);
   }
 
   .hero__actions :global(.button) {
@@ -226,13 +238,13 @@ const lines = content.title.split('|');
 
     .hero__inner :global(.hero__light) {
       top: 39rem;
-      left: 6%;
-      width: 56%;
-      height: 24rem;
+      left: 10%;
+      width: 50%;
+      height: 20rem;
     }
 
     .hero__text {
-      padding-top: var(--space-xl);
+      padding-top: var(--space-2xl);
     }
 
     .hero__actions {
@@ -266,26 +278,36 @@ const lines = content.title.split('|');
     }
 
     .hero__figure :global(.hero__window) {
-      height: clamp(34rem, calc(100svh - var(--header-height) - 8rem), 46rem);
+      height: clamp(34rem, calc(100svh - var(--header-height) - 6.5rem), 46rem);
     }
 
-    /* a luz nasce junto à janela e cai na parede atrás do título */
+    /*
+     * A luz nasce por baixo do caixilho (o canto superior entra sob a janela)
+     * e se apaga na parede atrás do título: é a única sobreposição do Hero.
+     */
     .hero__inner :global(.hero__light) {
-      top: 30%;
-      left: 1%;
-      width: 37%;
-      height: 56%;
+      top: 24%;
+      left: 12%;
+      width: 44%;
+      height: 50%;
     }
 
+    /*
+     * O texto ocupa as seis primeiras colunas e termina na linha do peitoril.
+     * O título é medido pela largura da própria coluna (cqi), então mantém
+     * folga até a janela em qualquer largura e idioma.
+     */
     .hero__text {
-      grid-column: 1 / span 7;
+      grid-column: 1 / span 6;
       grid-row: 1;
-      align-self: center;
+      align-self: end;
       margin-top: var(--space-xl);
+      padding-right: var(--grid-gap);
+      container-type: inline-size;
     }
 
-    .hero__lead {
-      margin-top: var(--space-xs);
+    .hero__title {
+      font-size: min(var(--step-hero), 19cqi);
     }
 
     .hero__facts {

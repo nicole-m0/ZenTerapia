@@ -1,0 +1,54 @@
+{
+  "head": {
+    "eyebrow": "Contact",
+    "title": "Let’s|*talk*.",
+    "lead": "Tell us how you are and what you are looking for. The first conversation, of up to 20 minutes, is free and with no commitment."
+  },
+  "channels": {
+    "title": "Reach us directly",
+    "whatsapp": {
+      "label": "WhatsApp",
+      "detail": "The quickest way. Replies on the same working day."
+    },
+    "email": { "label": "Email", "detail": "For longer messages, written calmly." },
+    "instagram": { "label": "Instagram", "detail": "Short notes on pausing and the body." }
+  },
+  "hours": {
+    "title": "Hours",
+    "lines": ["Tuesday to Friday, 9 a.m. to 7 p.m.", "Saturday, 9 a.m. to 1 p.m."]
+  },
+  "place": {
+    "title": "Where",
+    "lines": ["000 Rua das Acácias", "Vila Serena, São Paulo"],
+    "note": "Fictional address."
+  },
+  "form": {
+    "title": "Send a message",
+    "intro": "Marked fields are required. We reply within one working day.",
+    "required": "required",
+    "name": { "label": "Name", "error": "Tell us what we should call you." },
+    "email": { "label": "Email", "error": "Enter a valid email, such as name@example.com." },
+    "phone": { "label": "Phone or WhatsApp", "hint": "Optional. Only if you prefer a call." },
+    "practice": { "label": "Practice of interest", "undecided": "Not sure yet" },
+    "modality": { "legend": "Preferred format", "options": ["In person", "Online", "Either"] },
+    "message": {
+      "label": "Message",
+      "hint": "What would you like us to know before we talk?",
+      "error": "Write a message of at least 10 characters."
+    },
+    "consent": {
+      "before": "I agree that my details are used only to reply to this message, as described in the",
+      "link": "privacy notice",
+      "error": "To send, please agree to the use of your details."
+    },
+    "submit": "Send message",
+    "demoNote": "Demo form: nothing is sent or stored.",
+    "noscript": "Sending this form requires JavaScript. You can reach us on WhatsApp or by email instead.",
+    "errorSummary": "Please review the highlighted fields before sending.",
+    "success": {
+      "title": "Message ready.",
+      "text": "As this site is a demo, nothing was sent. On a real site, you would hear back within one working day.",
+      "again": "Write another message"
+    }
+  }
+}

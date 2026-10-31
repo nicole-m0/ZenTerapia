@@ -7,4 +7,10 @@ forWhom: 'Para quem sente o corpo tenso, cansado ou distante e quer se reaproxim
 durationMinutes: 80
 price: 220
 image: somatica
+format: 'Presencial'
+steps:
+  - 'Conversa sobre como o corpo está chegando naquele dia.'
+  - 'Respiração, movimento lento e toque, sempre combinado antes.'
+  - 'Repouso em silêncio e uma conversa curta para fechar.'
+note: 'Use roupas confortáveis. O toque pode ser recusado ou interrompido a qualquer momento.'
 ---

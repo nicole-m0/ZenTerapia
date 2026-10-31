@@ -1,0 +1,54 @@
+{
+  "head": {
+    "eyebrow": "Serviços",
+    "title": "Quatro práticas,|uma *pausa*.",
+    "lead": "Todas as sessões são individuais e começam com uma conversa. Se ainda não sabe qual escolher, a primeira conversa serve justamente para isso.",
+    "indexLabel": "Práticas nesta página"
+  },
+  "priceNote": "Valores fictícios, apenas para demonstração.",
+  "labels": {
+    "forWhom": "Para quem",
+    "session": "Como é a sessão",
+    "note": "Bom saber",
+    "duration": "Duração",
+    "format": "Formato",
+    "price": "Valor",
+    "minutes": "min",
+    "book": "Agendar esta prática"
+  },
+  "faq": {
+    "label": "Dúvidas",
+    "title": "Antes da *primeira* sessão",
+    "items": [
+      {
+        "question": "Como escolho a prática certa?",
+        "answer": "Não é preciso chegar decidido. Na primeira conversa, de até 20 minutos e gratuita, falamos sobre o seu momento e escolhemos juntos por onde começar."
+      },
+      {
+        "question": "Preciso ter experiência com meditação ou terapias integrativas?",
+        "answer": "Não. Todas as práticas são conduzidas passo a passo e adaptadas ao seu ritmo, inclusive para quem nunca experimentou nenhuma delas."
+      },
+      {
+        "question": "As sessões online funcionam?",
+        "answer": "A meditação guiada funciona muito bem por vídeo. As práticas que envolvem toque, como a terapia somática, o reiki e a aromaterapia, acontecem apenas presencialmente."
+      },
+      {
+        "question": "Com que frequência devo vir?",
+        "answer": "Depende do que você procura. Muitas pessoas começam com encontros semanais por um mês e depois espaçam. Nada é vendido em pacote: você decide a cada sessão."
+      },
+      {
+        "question": "E se eu precisar desmarcar?",
+        "answer": "Basta avisar com 24 horas de antecedência para remarcar sem custo."
+      },
+      {
+        "question": "As práticas substituem tratamento médico ou psicológico?",
+        "answer": "Não. As práticas integrativas complementam, e não substituem, o acompanhamento médico ou psicológico. Se você está em tratamento, ele continua sendo a referência."
+      }
+    ]
+  },
+  "closing": {
+    "title": "Ainda em *dúvida*?",
+    "text": "Conte como você está chegando. Na primeira conversa, escolhemos juntos a prática que faz mais sentido agora.",
+    "whatsappCta": { "label": "Conversar pelo WhatsApp" }
+  }
+}

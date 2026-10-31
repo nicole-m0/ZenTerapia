@@ -19,6 +19,12 @@ const services = defineCollection({
     price: z.number().positive(),
     /** Chave do manifesto src/data/images.ts */
     image: z.string(),
+    /** Presencial, online ou ambos (texto exibido). */
+    format: z.string(),
+    /** Os três momentos da sessão, na ordem. */
+    steps: z.array(z.string()).length(3),
+    /** Observação prática (o que levar, cuidados). */
+    note: z.string(),
   }),
 });
 
@@ -34,6 +40,13 @@ const testimonials = defineCollection({
 });
 
 const cta = z.object({ label: z.string() });
+const closing = z.object({ title: z.string(), text: z.string(), whatsappCta: cta });
+const pageHead = z.object({
+  eyebrow: z.string(),
+  /** `|` separa as linhas do título. */
+  title: z.string(),
+  lead: z.string(),
+});
 
 /** Textos da Home, um JSON por idioma. `*palavra*` vira itálico. */
 const home = defineCollection({
@@ -80,12 +93,107 @@ const home = defineCollection({
       /** Marca exibida na legenda de cada relato. */
       itemNote: z.string(),
     }),
-    closing: z.object({
+    closing,
+  }),
+});
+
+/** Textos da página de serviços (os serviços em si vêm da coleção `services`). */
+const servicesPage = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/pages/services' }),
+  schema: z.object({
+    head: pageHead.extend({ indexLabel: z.string() }),
+    /** Aviso de que os valores são fictícios. */
+    priceNote: z.string(),
+    labels: z.object({
+      forWhom: z.string(),
+      session: z.string(),
+      note: z.string(),
+      duration: z.string(),
+      format: z.string(),
+      price: z.string(),
+      minutes: z.string(),
+      book: z.string(),
+    }),
+    faq: z.object({
+      label: z.string(),
+      title: z.string(),
+      items: z.array(z.object({ question: z.string(), answer: z.string() })).min(1),
+    }),
+    closing,
+  }),
+});
+
+const aboutPage = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/pages/about' }),
+  schema: z.object({
+    head: z.object({
+      eyebrow: z.string(),
+      name: z.string(),
+      role: z.string(),
+      statement: z.string(),
+      body: z.array(z.string()).min(1),
+      demoNote: z.string(),
+      caption: z.string(),
+    }),
+    principles: z.object({
+      label: z.string(),
+      title: z.string(),
+      items: z.array(z.object({ title: z.string(), text: z.string() })).length(3),
+    }),
+    path: z.object({
+      label: z.string(),
+      title: z.string(),
+      demoNote: z.string(),
+      items: z.array(z.object({ year: z.string(), title: z.string(), text: z.string() })).min(1),
+    }),
+    space: z.object({
+      label: z.string(),
       title: z.string(),
       text: z.string(),
-      whatsappCta: cta,
+      details: z.array(z.string()).min(1),
+      demoNote: z.string(),
+      caption: z.string(),
+    }),
+    closing,
+  }),
+});
+
+const field = z.object({
+  label: z.string(),
+  hint: z.string().optional(),
+  error: z.string().optional(),
+});
+
+const contactPage = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/pages/contact' }),
+  schema: z.object({
+    head: pageHead,
+    channels: z.object({
+      title: z.string(),
+      whatsapp: z.object({ label: z.string(), detail: z.string() }),
+      email: z.object({ label: z.string(), detail: z.string() }),
+      instagram: z.object({ label: z.string(), detail: z.string() }),
+    }),
+    hours: z.object({ title: z.string(), lines: z.array(z.string()).min(1) }),
+    place: z.object({ title: z.string(), lines: z.array(z.string()).min(1), note: z.string() }),
+    form: z.object({
+      title: z.string(),
+      intro: z.string(),
+      required: z.string(),
+      name: field,
+      email: field,
+      phone: field,
+      practice: field.extend({ undecided: z.string() }),
+      modality: z.object({ legend: z.string(), options: z.array(z.string()).length(3) }),
+      message: field,
+      consent: z.object({ before: z.string(), link: z.string(), error: z.string() }),
+      submit: z.string(),
+      demoNote: z.string(),
+      noscript: z.string(),
+      errorSummary: z.string(),
+      success: z.object({ title: z.string(), text: z.string(), again: z.string() }),
     }),
   }),
 });
 
-export const collections = { services, testimonials, home };
+export const collections = { services, testimonials, home, servicesPage, aboutPage, contactPage };

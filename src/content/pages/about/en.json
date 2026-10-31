@@ -1,0 +1,82 @@
+{
+  "head": {
+    "eyebrow": "About",
+    "name": "Helena Prado",
+    "role": "Integrative therapist",
+    "statement": "I started studying the body after years of *ignoring* my own.",
+    "body": [
+      "For a long time I worked in an office, at a pace that left no room to notice tiredness, tension or hunger. The pause came first as a necessity, and later became my work.",
+      "Today I see people much like I used to be: functioning well on the outside and asking for help on the inside. My role is not to fix anyone, but to make room for each person to listen to themselves again."
+    ],
+    "demoNote": "Helena Prado is a fictional character. Her background, training and address were also invented for this demo.",
+    "caption": "4 p.m. light in the room"
+  },
+  "principles": {
+    "label": "Approach",
+    "title": "Three things that *never* change",
+    "items": [
+      {
+        "title": "No rush",
+        "text": "A session has a beginning, a middle and an end, but no target. We start from how you are that day, not from a protocol."
+      },
+      {
+        "title": "With consent",
+        "text": "Every touch, exercise or scent is agreed beforehand. You can ask to stop, change or simply rest, at any moment."
+      },
+      {
+        "title": "Alongside, not above",
+        "text": "You know your body better than anyone. My work is to observe, suggest and adjust with you, never to decide for you."
+      }
+    ]
+  },
+  "path": {
+    "label": "Background",
+    "title": "A path taken *slowly*",
+    "demoNote": "Fictional dates and training.",
+    "items": [
+      {
+        "year": "2012",
+        "title": "A first pause",
+        "text": "After burning out, she starts meditating with a neighbourhood group once a week."
+      },
+      {
+        "year": "2015",
+        "title": "Training in somatic therapy",
+        "text": "Three years of study in breathing, movement and body awareness, with supervised practice."
+      },
+      {
+        "year": "2018",
+        "title": "Reiki and aromatherapy",
+        "text": "Complementary certifications and a year of supervised sessions before working independently."
+      },
+      {
+        "year": "2021",
+        "title": "The room with a window",
+        "text": "Opens her own practice, designed to be quiet, bright and unhurried."
+      },
+      {
+        "year": "Today",
+        "title": "Ongoing listening and study",
+        "text": "Monthly supervision, study groups, and sessions in person and online."
+      }
+    ]
+  },
+  "space": {
+    "label": "The space",
+    "title": "A room for *slowing down*",
+    "text": "Sessions take place in a large room with a wooden floor and tall windows, with natural light for most of the day. There is a treatment table, cushions and an armchair; the rest is empty space, on purpose.",
+    "details": [
+      "000 Rua das Acácias, Vila Serena, São Paulo",
+      "Ground floor, step-free access",
+      "Tea and water always available",
+      "Online sessions by video call"
+    ],
+    "demoNote": "Fictional address.",
+    "caption": "The treatment room"
+  },
+  "closing": {
+    "title": "Shall we *talk*?",
+    "text": "The first conversation is free and with no commitment. Tell us how you are, and we will see together whether it makes sense to begin.",
+    "whatsappCta": { "label": "Chat on WhatsApp" }
+  }
+}

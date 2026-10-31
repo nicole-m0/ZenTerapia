@@ -15,6 +15,8 @@ interface Props {
   /** Seta numa segunda vidraça, que avança no hover. */
   arrow?: boolean;
   fullWidth?: boolean;
+  /** Só para `<button>`. */
+  disabled?: boolean;
   class?: string;
 }
 
@@ -25,6 +27,7 @@ const {
   size = 'md',
   arrow = false,
   fullWidth = false,
+  disabled = false,
   class: className,
 } = Astro.props;
 
@@ -49,7 +52,7 @@ const classes = [
     )}
   </a>
 ) : (
-  <button type={type} class:list={classes}>
+  <button type={type} class:list={classes} disabled={disabled}>
     <span class="button__label">
       <slot />
     </span>

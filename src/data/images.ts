@@ -14,6 +14,8 @@ import meditacao from '@/assets/images/home/meditacao.jpg';
 import reiki from '@/assets/images/home/reiki.jpg';
 import aromaterapia from '@/assets/images/home/aromaterapia.jpg';
 import experiencia from '@/assets/images/home/experiencia.jpg';
+import sala from '@/assets/images/pages/sala.jpg';
+import luzParede from '@/assets/images/pages/luz-parede.jpg';
 
 export interface Photo {
   src: ImageMetadata;
@@ -82,6 +84,24 @@ export const images = {
       en: 'A white porcelain teapot and a cup of tea on a linen cloth over blue tiles.',
     },
     credit: { author: 'Gaelle Marcel', url: 'https://unsplash.com/photos/lKlm7XfB0PY' },
+  },
+  sala: {
+    src: sala,
+    alt: {
+      pt: 'Sala vazia com piso de madeira e janelas altas, uma delas aberta, e sol da manhã no chão.',
+      en: 'An empty room with a wooden floor and tall windows, one of them open, with morning sun on the floor.',
+    },
+    position: '40% 45%',
+    credit: { author: 'Christian Lue', url: 'https://unsplash.com/photos/4YhNRgL59Fc' },
+  },
+  luzParede: {
+    src: luzParede,
+    alt: {
+      pt: 'Sombra de um caixilho de janela projetada numa parede clara pelo sol da tarde.',
+      en: 'The shadow of a window frame cast on a pale wall by the afternoon sun.',
+    },
+    position: '65% 50%',
+    credit: { author: 'Dee Winter', url: 'https://unsplash.com/photos/nq0u30kRsfo' },
   },
 } satisfies Record<string, Photo>;
 

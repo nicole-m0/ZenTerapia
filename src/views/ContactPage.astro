@@ -1,25 +1,320 @@
 ---
+/**
+ * Contato: o título na luz da parede; os canais diretos numa janela de três
+ * vidraças (cada vidraça é um caminho), horários e endereço logo abaixo, e o
+ * formulário num painel claro com a verga da janela no alto.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import ContactForm from '@/components/contact/ContactForm.astro';
+import DemoNote from '@/components/ui/DemoNote.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import Icon from '@/components/ui/Icon.astro';
+import LightCast from '@/components/window/LightCast.astro';
+import { site } from '@/data/site';
 import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/utils';
+import { getContactPageContent, getServices } from '@/lib/content';
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
-const page = useTranslations(locale).pages.contact;
+const t = useTranslations(locale);
+const page = t.pages.contact;
+const [content, services] = await Promise.all([getContactPageContent(locale), getServices(locale)]);
+const lines = content.head.title.split('|');
+
+const channels = (['whatsapp', 'email', 'instagram'] as const).map((key) => ({
+  label: content.channels[key].label,
+  detail: content.channels[key].detail,
+  value: site.contact[key].label,
+  href: site.contact[key].href,
+  external: key !== 'email',
+}));
 ---
 
 <BaseLayout locale={locale} route="contact" title={page.title} description={page.description}>
-  {/* Conteúdo da página nas próximas etapas. */}
-  <div class="container page-stub">
-    <h1>{page.title}</h1>
+  <header class="contact-head">
+    <div class="container contact-head__inner">
+      <LightCast class="contact-head__light" motion="load" soft />
+      <p class="eyebrow">{content.head.eyebrow}</p>
+      <h1 class="contact-head__title">
+        {lines.map((line) => (
+          <span class="contact-head__line">
+            <Emphasis text={line} />{' '}
+          </span>
+        ))}
+      </h1>
+      <p class="lead contact-head__lead">{content.head.lead}</p>
+    </div>
+  </header>
+
+  <div class="container contact-body">
+    <div class="contact-info">
+      <section aria-labelledby="channels-title">
+        <h2 id="channels-title" class="contact-info__heading">
+          {content.channels.title}
+        </h2>
+        <ul class="channels" role="list">
+          {channels.map((channel) => (
+            <li>
+              <a
+                class="channels__link"
+                href={channel.href}
+                target={channel.external ? '_blank' : undefined}
+                rel={channel.external ? 'noopener noreferrer' : undefined}
+              >
+                <span class="channels__label">{channel.label}</span>
+                <span class="channels__value">{channel.value}</span>
+                <span class="channels__detail">{channel.detail}</span>
+                {channel.external && <span class="visually-hidden">{t.a11y.opensInNewTab}</span>}
+                <Icon
+                  name={channel.external ? 'arrow-up-right' : 'arrow-right'}
+                  size={18}
+                  class="channels__icon"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+        <span class="channels__sill" aria-hidden="true"></span>
+      </section>
+
+      <div class="contact-info__facts">
+        <section aria-labelledby="hours-title">
+          <h2 id="hours-title" class="contact-info__heading">
+            {content.hours.title}
+          </h2>
+          {content.hours.lines.map((line) => (
+            <p>{line}</p>
+          ))}
+        </section>
+        <section aria-labelledby="place-title">
+          <h2 id="place-title" class="contact-info__heading">
+            {content.place.title}
+          </h2>
+          {content.place.lines.map((line) => (
+            <p>{line}</p>
+          ))}
+          <DemoNote>{content.place.note}</DemoNote>
+        </section>
+      </div>
+    </div>
+
+    <ContactForm locale={locale} content={content.form} services={services} />
   </div>
 </BaseLayout>
 
 <style>
-  .page-stub {
-    padding-block: var(--space-section);
+  /* ---------- Cabeçalho ---------- */
+
+  .contact-head {
+    overflow: clip;
+  }
+
+  .contact-head__inner {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: var(--space-m);
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  .contact-head__inner > :not(:first-child) {
+    position: relative;
+  }
+
+  .contact-head__inner :global(.contact-head__light) {
+    position: absolute;
+    top: 1rem;
+    left: 18%;
+    width: 70%;
+    height: 17rem;
+  }
+
+  .contact-head__title {
+    font-size: var(--step-hero);
+  }
+
+  .contact-head__line {
+    display: block;
+  }
+
+  .contact-head__line:nth-child(2) {
+    padding-inline-start: 0.75em;
+  }
+
+  .contact-head__lead {
+    max-width: 38ch;
+  }
+
+  /* ---------- Corpo ---------- */
+
+  .contact-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xl);
+    padding-bottom: var(--space-section);
+  }
+
+  .contact-info {
+    display: grid;
+    align-content: start;
+    gap: var(--space-xl);
+  }
+
+  .contact-info__heading {
+    margin-bottom: var(--space-s);
+    font-family: var(--font-body);
+    font-size: var(--step--2);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  /* ---------- Canais: uma janela de três vidraças ---------- */
+
+  .channels {
+    display: grid;
+    gap: var(--bar);
+    padding: var(--bar);
+    background-color: var(--color-frame);
+  }
+
+  .channels__link {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    padding: var(--space-s) 3.5rem var(--space-s) var(--space-s);
+    color: var(--color-ink);
+    text-decoration: none;
+    background-color: var(--color-dim);
+    box-shadow: var(--shadow-reveal);
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
+
+  .channels__link:hover {
+    background-color: var(--color-light);
+  }
+
+  .channels__link:focus-visible {
+    outline: 3px solid var(--color-light);
+    outline-offset: -6px;
+  }
+
+  .channels__label {
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  .channels__value {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .channels__detail {
+    font-size: var(--step--1);
+    color: var(--color-stone);
+  }
+
+  .channels__link :global(.channels__icon) {
+    position: absolute;
+    top: var(--space-s);
+    right: var(--space-s);
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .channels__link:hover :global(.channels__icon) {
+    translate: 0.2rem -0.2rem;
+  }
+
+  .channels__sill {
+    display: block;
+    height: calc(var(--bar) * 1.5);
+    margin-inline: calc(var(--bar) * -1.75);
+    background-color: var(--color-frame);
+    box-shadow: var(--shadow-wall);
+  }
+
+  .contact-info__facts {
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .contact-info__facts section {
+    display: grid;
+    justify-items: start;
+    gap: 0.25rem;
+  }
+
+  .contact-info__facts :global(.demo-note) {
+    margin-top: var(--space-2xs);
+  }
+
+  /* ---------- Tablet ---------- */
+
+  @media (min-width: 40rem) {
+    .contact-info__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Desktop ---------- */
+
+  @media (min-width: 60rem) {
+    .contact-head__inner {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      padding-block: var(--space-3xl) var(--space-2xl);
+    }
+
+    .contact-head__inner > * {
+      grid-column: 1 / span 7;
+    }
+
+    .contact-head__inner :global(.contact-head__light) {
+      top: 2rem;
+      left: 8%;
+      width: 40%;
+      height: 24rem;
+    }
+
+    .contact-head__inner .contact-head__lead {
+      grid-column: 8 / -1;
+      grid-row: 2;
+      align-self: end;
+    }
+
+    .contact-body {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: start;
+    }
+
+    .contact-info {
+      grid-column: 1 / span 5;
+    }
+
+    .contact-body > :global(.contact-form) {
+      grid-column: 7 / -1;
+    }
+
+    .contact-info__facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .contact-info__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>

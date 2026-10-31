@@ -1,0 +1,82 @@
+{
+  "head": {
+    "eyebrow": "Sobre",
+    "name": "Helena Prado",
+    "role": "Terapeuta integrativa",
+    "statement": "Comecei a estudar o corpo depois de passar anos *ignorando* o meu.",
+    "body": [
+      "Trabalhei por muito tempo num escritório, num ritmo que não deixava espaço para perceber cansaço, tensão ou fome. A pausa veio primeiro como necessidade e depois virou ofício.",
+      "Hoje recebo pessoas parecidas com quem eu fui: funcionando bem por fora e pedindo ajuda por dentro. Meu papel não é consertar ninguém, e sim abrir espaço para que cada pessoa volte a se escutar."
+    ],
+    "demoNote": "Helena Prado é uma personagem fictícia. Trajetória, formação e endereço também foram inventados para esta demonstração.",
+    "caption": "Luz das 16h na sala"
+  },
+  "principles": {
+    "label": "Abordagem",
+    "title": "Três coisas que *não* mudam",
+    "items": [
+      {
+        "title": "Sem pressa",
+        "text": "A sessão tem começo, meio e fim, mas não tem meta. Partimos de como você está naquele dia, e não de um protocolo."
+      },
+      {
+        "title": "Com consentimento",
+        "text": "Cada toque, exercício ou aroma é combinado antes. Você pode pedir para parar, mudar ou apenas descansar, a qualquer momento."
+      },
+      {
+        "title": "Junto, não por cima",
+        "text": "Você é quem mais sabe sobre o seu corpo. Meu trabalho é observar, sugerir e ajustar com você, nunca decidir por você."
+      }
+    ]
+  },
+  "path": {
+    "label": "Trajetória",
+    "title": "Um caminho feito *devagar*",
+    "demoNote": "Datas e formações fictícias.",
+    "items": [
+      {
+        "year": "2012",
+        "title": "A primeira pausa",
+        "text": "Depois de um esgotamento, começa a praticar meditação num grupo de bairro, uma vez por semana."
+      },
+      {
+        "year": "2015",
+        "title": "Formação em terapia somática",
+        "text": "Três anos de estudo sobre respiração, movimento e consciência corporal, com supervisão de casos."
+      },
+      {
+        "year": "2018",
+        "title": "Reiki e aromaterapia",
+        "text": "Certificações complementares e um ano de atendimentos supervisionados antes de atender por conta própria."
+      },
+      {
+        "year": "2021",
+        "title": "A sala com janela",
+        "text": "Abre o próprio espaço, pensado para ser silencioso, claro e sem pressa."
+      },
+      {
+        "year": "Hoje",
+        "title": "Escuta e estudo contínuos",
+        "text": "Supervisão mensal, grupos de estudo e atendimentos presenciais e online."
+      }
+    ]
+  },
+  "space": {
+    "label": "O espaço",
+    "title": "Uma sala para *desacelerar*",
+    "text": "O atendimento acontece numa sala ampla, de piso de madeira e janelas altas, com luz natural durante quase todo o dia. Há uma maca, almofadas e uma poltrona; o resto é espaço vazio, de propósito.",
+    "details": [
+      "Rua das Acácias, 000, Vila Serena, São Paulo",
+      "Térreo, com acesso sem degraus",
+      "Chá e água sempre à disposição",
+      "Sessões online por videochamada"
+    ],
+    "demoNote": "Endereço fictício.",
+    "caption": "A sala de atendimento"
+  },
+  "closing": {
+    "title": "Vamos *conversar*?",
+    "text": "A primeira conversa é gratuita e sem compromisso. Conte como você está e vemos juntos se faz sentido começar.",
+    "whatsappCta": { "label": "Conversar pelo WhatsApp" }
+  }
+}

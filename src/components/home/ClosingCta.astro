@@ -67,8 +67,10 @@ const t = useTranslations(locale);
     margin-inline-start: calc(min(52rem, 104%) / -2);
   }
 
+  /* entrelinha um pouco maior: acentos em caixa alta (DÚVIDA) não tocam a linha de cima */
   .closing__title {
     max-width: 11ch;
+    line-height: 0.98;
   }
 
   .closing__text {

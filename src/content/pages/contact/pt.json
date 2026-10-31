@@ -1,0 +1,57 @@
+{
+  "head": {
+    "eyebrow": "Contato",
+    "title": "Vamos|*conversar*.",
+    "lead": "Conte como você está e o que procura. A primeira conversa, de até 20 minutos, é gratuita e sem compromisso."
+  },
+  "channels": {
+    "title": "Fale direto",
+    "whatsapp": {
+      "label": "WhatsApp",
+      "detail": "O caminho mais rápido. Resposta no mesmo dia útil."
+    },
+    "email": { "label": "E-mail", "detail": "Para mensagens mais longas, com calma." },
+    "instagram": { "label": "Instagram", "detail": "Textos curtos sobre pausa e corpo." }
+  },
+  "hours": {
+    "title": "Horários",
+    "lines": ["Terça a sexta, das 9h às 19h", "Sábado, das 9h às 13h"]
+  },
+  "place": {
+    "title": "Onde",
+    "lines": ["Rua das Acácias, 000", "Vila Serena, São Paulo"],
+    "note": "Endereço fictício."
+  },
+  "form": {
+    "title": "Envie uma mensagem",
+    "intro": "Os campos marcados são obrigatórios. Respondemos em até um dia útil.",
+    "required": "obrigatório",
+    "name": { "label": "Nome", "error": "Diga como podemos chamar você." },
+    "email": {
+      "label": "E-mail",
+      "error": "Informe um e-mail válido, como nome@exemplo.com."
+    },
+    "phone": { "label": "Telefone ou WhatsApp", "hint": "Opcional. Só se preferir uma ligação." },
+    "practice": { "label": "Prática de interesse", "undecided": "Ainda não sei" },
+    "modality": { "legend": "Formato preferido", "options": ["Presencial", "Online", "Tanto faz"] },
+    "message": {
+      "label": "Mensagem",
+      "hint": "O que você gostaria que soubéssemos antes da conversa?",
+      "error": "Escreva uma mensagem com pelo menos 10 caracteres."
+    },
+    "consent": {
+      "before": "Concordo que meus dados sejam usados apenas para responder a este contato, conforme o",
+      "link": "aviso de privacidade",
+      "error": "Para enviar, é preciso concordar com o uso dos dados."
+    },
+    "submit": "Enviar mensagem",
+    "demoNote": "Formulário demonstrativo: nada é enviado nem armazenado.",
+    "noscript": "O envio deste formulário depende de JavaScript. Você pode falar pelo WhatsApp ou por e-mail.",
+    "errorSummary": "Revise os campos destacados antes de enviar.",
+    "success": {
+      "title": "Mensagem pronta.",
+      "text": "Como este site é uma demonstração, nada foi enviado. Num site real, a resposta chegaria em até um dia útil.",
+      "again": "Escrever outra mensagem"
+    }
+  }
+}

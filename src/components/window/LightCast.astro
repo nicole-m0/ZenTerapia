@@ -13,6 +13,8 @@ interface Props {
   surface?: 'wall' | 'floor';
   /** `load`: acende ao abrir a página. `scroll`: a luz caminha com a rolagem. */
   motion?: 'load' | 'scroll' | 'none';
+  /** Luz mais difusa: montantes mais largos, penumbra maior e queda mais longa. */
+  soft?: boolean;
   class?: string;
 }
 
@@ -21,6 +23,7 @@ const {
   rows = [27, 73],
   surface = 'wall',
   motion = 'scroll',
+  soft = false,
   class: className,
 } = Astro.props;
 
@@ -29,7 +32,13 @@ const paneCount = cols.length * rows.length;
 ---
 
 <div
-  class:list={['light-cast', `light-cast--${surface}`, `light-cast--${motion}`, className]}
+  class:list={[
+    'light-cast',
+    `light-cast--${surface}`,
+    `light-cast--${motion}`,
+    { 'light-cast--soft': soft },
+    className,
+  ]}
   style={`--cast-cols: ${toTrack(cols)}; --cast-rows: ${toTrack(rows)}`}
   aria-hidden="true"
 >
@@ -50,6 +59,12 @@ const paneCount = cols.length * rows.length;
     transform: skewX(var(--cast-skew));
     filter: blur(var(--light-blur));
     mask-image: linear-gradient(to bottom left, #000 35%, rgb(0 0 0 / 0.45));
+  }
+
+  .light-cast--soft {
+    gap: calc(var(--bar) * 2);
+    filter: blur(clamp(2.5px, 0.1rem + 0.15vw, 4.5px));
+    mask-image: linear-gradient(to bottom left, #000 40%, rgb(0 0 0 / 0.55) 75%, rgb(0 0 0 / 0.1));
   }
 
   .light-cast--floor {
