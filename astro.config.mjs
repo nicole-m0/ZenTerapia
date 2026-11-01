@@ -3,57 +3,9 @@ import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { routes } from './src/i18n/config.ts';
 import { getAlternateLinks } from './src/i18n/utils.ts';
+import { resolveSiteUrl } from './scripts/site-url.mjs';
 
-/**
- * URL pública do site (canonical, hreflang, og:url/og:image, JSON-LD, sitemap e robots).
- *
- * - `astro build` (produção) exige SITE_URL com um domínio real em https; sem ele, o build falha.
- * - `astro build --mode qa` (validação e testes locais) e `astro dev` usam o domínio
- *   reservado abaixo, com aviso. Esse build nunca deve ser publicado.
- */
-const PLACEHOLDER_URL = 'https://terapiazen.example';
-
-/** @param {string} flag */
-function argValue(flag) {
-  const args = process.argv;
-  const inline = args.find((arg) => arg.startsWith(`${flag}=`));
-  if (inline) return inline.slice(flag.length + 1);
-  const index = args.indexOf(flag);
-  return index > -1 ? args[index + 1] : undefined;
-}
-
-function resolveSiteUrl() {
-  const isBuild = process.argv.includes('build');
-  const mode = argValue('--mode') ?? 'production';
-  const value = process.env.SITE_URL?.trim();
-
-  if (value) {
-    const url = new URL(value);
-    if (url.hostname.endsWith('.example')) {
-      throw new Error(`SITE_URL usa um domínio reservado (${url.hostname}). Use o domínio real.`);
-    }
-    if (isBuild && mode === 'production' && url.protocol !== 'https:') {
-      throw new Error(`SITE_URL precisa usar https em produção (recebido: ${value}).`);
-    }
-    return url.origin;
-  }
-
-  if (isBuild && mode === 'production') {
-    throw new Error(
-      'Defina SITE_URL com o domínio definitivo para o build de produção ' +
-        '(ex.: SITE_URL=https://seu-dominio.com.br npm run build). ' +
-        'Para validar localmente, use npm run build:qa.',
-    );
-  }
-  if (isBuild) {
-    console.warn(
-      `[terapia-zen] Build "${mode}" com o domínio provisório ${PLACEHOLDER_URL}: ` +
-        'serve só para validação local, não publique esta pasta dist/.',
-    );
-  }
-  return PLACEHOLDER_URL;
-}
-
+/** URL pública do site: regras em scripts/site-url.mjs (SITE_URL, Vercel ou provisória). */
 const SITE_URL = resolveSiteUrl();
 
 /**
@@ -100,6 +52,14 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory',
+  },
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      // JPG de reserva (navegadores sem AVIF/WebP): mozjpeg gera arquivos
+      // progressivos e menores com a mesma qualidade padrão.
+      config: { jpeg: { mozjpeg: true } },
+    },
   },
   i18n: {
     // Manter em sincronia com src/i18n/config.ts

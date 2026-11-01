@@ -43,31 +43,42 @@ desenvolvimento.
 
 Comandos avulsos: `npm run check`, `npm run lint`, `npm run format:check`, `npm run test`.
 
-## Publicação
+## Publicação (Vercel)
 
-O site é estático: o build gera a pasta `dist/`, que pode ir para qualquer hospedagem de
-arquivos (Netlify, Vercel, Cloudflare Pages, GitHub Pages, um servidor próprio etc.).
+O site é estático: `npm run build` gera a pasta `dist/`. O destino previsto é a Vercel,
+sem nenhum domínio próprio por enquanto.
 
-### `SITE_URL` (obrigatório em produção)
+1. Importe o repositório na Vercel. O preset **Astro** é detectado sozinho:
+   build `npm run build`, saída `dist`. Use Node.js 22 nas configurações do projeto.
+2. Não é preciso cadastrar variáveis. Sem `SITE_URL`, o build usa o domínio de produção que
+   a Vercel informa (`VERCEL_PROJECT_PRODUCTION_URL`, por exemplo
+   `https://nome-do-projeto.vercel.app`). Deixe ligada a opção _Automatically expose System
+   Environment Variables_ (padrão).
+3. Deploys de preview usam esse mesmo endereço no canonical e no sitemap, e a Vercel já os
+   marca como `noindex`.
 
-O domínio definitivo ainda não foi definido. Ele é informado pela variável de ambiente
-`SITE_URL`, sem barra final:
+O `vercel.json` só fixa a barra final nas URLs (`/servicos` → `/servicos/`), igual aos
+canonicals gerados pelo Astro.
+
+### `SITE_URL` (opcional)
+
+Se um dia houver um domínio próprio, basta adicioná-lo ao projeto na Vercel (ele passa a ser
+o domínio de produção) ou definir `SITE_URL`, sem barra final, nas variáveis de ambiente do
+build. Fora da Vercel, `SITE_URL` é obrigatório:
 
 ```sh
 SITE_URL=https://seu-dominio.com.br npm run build
 ```
 
 No PowerShell: `$env:SITE_URL = 'https://seu-dominio.com.br'; npm run build`.
-Nas plataformas de hospedagem, cadastre `SITE_URL` nas variáveis de ambiente do build.
 
-O build de produção **se recusa a rodar** sem um domínio real. Ele falha se:
+Regras (em `scripts/site-url.mjs`): `SITE_URL` tem prioridade; domínios reservados para
+exemplos (`*.example`, incluindo `terapiazen.example`) e endereços sem `https` são recusados;
+um build de produção fora da Vercel e sem `SITE_URL` falha.
 
-- `SITE_URL` não estiver definido;
-- o domínio for reservado para exemplos (`*.example`, incluindo `terapiazen.example`);
-- o endereço não usar `https`.
-
-O comando `npm run build:qa` gera um build com o domínio provisório, só para validação local
-e testes. Ele avisa no terminal e **essa pasta `dist/` nunca deve ser publicada**.
+O comando `npm run build:qa` gera um build com o domínio provisório
+`https://terapiazen.example`, só para validação local e testes. Ele avisa no terminal e
+**essa pasta `dist/` nunca deve ser publicada**.
 
 ### O que depende do domínio
 
@@ -84,8 +95,8 @@ fictício, explicado no aviso legal, e continua igual em produção.
 
 ### Página 404
 
-O build gera um único `404.html`, bilíngue. Configure a hospedagem para servi-lo nas rotas
-inexistentes (a maioria das plataformas faz isso automaticamente).
+O build gera um único `404.html`, bilíngue. A Vercel o serve automaticamente nas rotas
+inexistentes, com status 404.
 
 ## Estrutura
 
