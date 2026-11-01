@@ -11,19 +11,27 @@ import SectionLabel from '@/components/ui/SectionLabel.astro';
 import TextLink from '@/components/ui/TextLink.astro';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
 
+// Paleta atual (src/styles/tokens.css), com o contraste do par de uso real.
 const colors = [
-  { token: 'paper', hex: '#F4F3EE', role: 'Fundo principal', ratio: 'tinta 13.85' },
-  { token: 'mist', hex: '#E2E9EA', role: 'Superfície de respiro', ratio: 'tinta 12.52' },
-  { token: 'sage-100', hex: '#DCE3D3', role: 'Superfície de destaque', ratio: 'tinta 11.71' },
-  { token: 'sage-300', hex: '#B6C5AC', role: 'Detalhes, seleção', ratio: 'tinta 8.48' },
-  { token: 'moss', hex: '#2C3F33', role: 'Botão primário', ratio: 'papel 10.13', dark: true },
-  { token: 'ink', hex: '#1D2721', role: 'Texto, footer', ratio: 'papel 13.85', dark: true },
-  { token: 'stone', hex: '#585E57', role: 'Texto secundário', ratio: 'papel 5.99', dark: true },
-  { token: 'clay', hex: '#A35A3F', role: 'Acento (só detalhes)', ratio: 'papel 4.62', dark: true },
+  { token: 'paper', hex: '#E8E6DF', role: 'Parede: fundo principal', ratio: 'tinta 13.77' },
+  { token: 'light', hex: '#FAF7EE', role: 'Luz projetada, painéis claros', ratio: 'stone 6.86' },
+  { token: 'dim', hex: '#D3D4CA', role: 'Vidraças e superfícies', ratio: 'tinta 11.50' },
+  {
+    token: 'frame',
+    hex: '#22302A',
+    role: 'Caixilho, botão, seção escura',
+    ratio: 'light 12.86',
+    dark: true,
+  },
+  { token: 'ink', hex: '#151D18', role: 'Texto', ratio: 'papel 13.77', dark: true },
+  { token: 'stone', hex: '#51584F', role: 'Texto secundário', ratio: 'papel 5.88', dark: true },
+  { token: 'clay', hex: '#8F4A2F', role: 'Acento (só detalhes)', ratio: 'papel 5.27', dark: true },
+  { token: 'clay-light', hex: '#D99A7F', role: 'Acento sobre o caixilho', ratio: 'frame 5.83' },
 ];
 
 const typeScale = [
-  { step: '6', use: 'Hero' },
+  { step: 'hero', use: 'Hero e títulos de página' },
+  { step: '6', use: 'Destaques grandes' },
   { step: '5', use: 'h1' },
   { step: '4', use: 'h2' },
   { step: '3', use: 'Destaque' },
@@ -35,6 +43,21 @@ const typeScale = [
 ];
 
 const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
+
+// Tokens da janela e do movimento.
+const windowTokens = [
+  { token: '--bar', value: '0.5–0.875rem', use: 'Espessura do caixilho e dos montantes' },
+  { token: '--light-skew', value: '-22deg', use: 'Ângulo da luz projetada (alto, à direita)' },
+  {
+    token: '--ease-out',
+    value: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    use: 'Curva de todas as entradas',
+  },
+  { token: '--duration-base', value: '320ms', use: 'Hover, troca de página, FAQ' },
+  { token: '--duration-slow', value: '700ms', use: 'Revelação na rolagem' },
+  { token: '--duration-light', value: '1400ms', use: 'A luz acendendo, a faixa no vidro' },
+  { token: '--reveal-distance', value: '1.25rem', use: 'Subida da revelação (só vertical)' },
+];
 ---
 
 <BaseLayout
@@ -51,8 +74,9 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
         Sistema <em>visual</em>
       </h1>
       <p class="lead">
-        Cores, tipografia, espaçamento e componentes da Terapia Zen. O conceito é o respiro:
-        superfícies claras e frias, muito espaço negativo e um único acento quente.
+        Cores, tipografia, espaçamento e componentes da Terapia Zen. O conceito é a janela: a parede
+        é o papel, a luz entra mais clara que a parede, as fotos aparecem através do caixilho verde
+        quase preto e um único acento quente aparece só em detalhes.
       </p>
     </header>
 
@@ -60,8 +84,9 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
       <SectionLabel number="01">Marca</SectionLabel>
       <h2 id="g-brand">Símbolo e assinatura</h2>
       <p class="muted">
-        Um anel aberto e um ponto na pausa: o instante entre inspirar e expirar. O mesmo ponto em
-        argila marca a página atual na navegação.
+        Uma janela de quatro vidraças vista de frente, nas mesmas proporções do site (40/60 ×
+        27/73). A vidraça de cima, à direita, é a que recebe a luz, em argila. O mesmo acento marca
+        a página atual na navegação.
       </p>
       <div class="brand-row">
         <div class="brand-tile">
@@ -112,7 +137,7 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
       </p>
 
       <p class="display specimen">
-        Comece seu momento de <em>cuidado.</em>
+        O cuidado começa na <em>pausa.</em>
       </p>
 
       <ol class="type-scale" role="list">
@@ -122,7 +147,7 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
               step {step} · {use}
             </span>
             <span
-              class:list={['type-scale__sample', { display: Number(step) >= 2 }]}
+              class:list={['type-scale__sample', { display: step === 'hero' || Number(step) >= 2 }]}
               style={`font-size: var(--step-${step})`}
             >
               Respirar, desacelerar, voltar a si
@@ -197,6 +222,25 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
           <li>
             <span class="space-scale__name">{space}</span>
             <span class="space-scale__bar" style={`width: var(--space-${space})`} />
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="guide__section" aria-labelledby="g-window">
+      <SectionLabel number="06">Janela e movimento</SectionLabel>
+      <h2 id="g-window">Caixilho, luz e tempo</h2>
+      <p class="muted">
+        Todo movimento usa só opacidade e deslocamento, respeita a preferência por movimento
+        reduzido e nunca esconde conteúdo sem JavaScript.
+      </p>
+      <ol class="space-scale token-list" role="list">
+        {windowTokens.map(({ token, value, use }) => (
+          <li>
+            <span class="space-scale__name">{token}</span>
+            <span class="muted">
+              {value} · {use}
+            </span>
           </li>
         ))}
       </ol>
@@ -348,6 +392,19 @@ const spaces = ['3xs', '2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl'];
     display: grid;
     grid-template-columns: 3rem 1fr;
     align-items: center;
+  }
+
+  .token-list li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3xs) var(--space-m);
+    padding-block: var(--space-2xs);
+    border-bottom: var(--border-hairline);
+  }
+
+  @media (min-width: 40rem) {
+    .token-list li {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
   }
 
   .space-scale__bar {

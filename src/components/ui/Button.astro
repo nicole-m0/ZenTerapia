@@ -129,23 +129,32 @@ const classes = [
     pointer-events: none;
   }
 
-  .button:hover .button__label::before {
-    transform: translateX(300%) skewX(var(--light-skew));
-    transition: transform var(--duration-light) var(--ease-out);
+  /* efeitos de hover só com mouse: no toque, não ficam presos depois do toque */
+  @media (hover: hover) {
+    .button:hover .button__label::before {
+      transform: translateX(300%) skewX(var(--light-skew));
+      transition: transform var(--duration-light) var(--ease-out);
+    }
+
+    .button:hover .button__label,
+    .button:hover .button__pane {
+      background-color: var(--button-bg-hover);
+    }
+
+    .button:hover .button__pane :global(.button__arrow) {
+      animation: arrow-through 640ms var(--ease-out);
+    }
   }
 
-  .button:hover .button__label,
-  .button:hover .button__pane {
+  /* no toque, a resposta é o próprio aperto: a vidraça escurece enquanto pressionada */
+  .button:active .button__label,
+  .button:active .button__pane {
     background-color: var(--button-bg-hover);
   }
 
   /* a seta sai pela direita da vidraça e volta pela esquerda */
   .button__pane :global(.button__arrow) {
     transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  .button:hover .button__pane :global(.button__arrow) {
-    animation: arrow-through 640ms var(--ease-out);
   }
 
   @keyframes arrow-through {

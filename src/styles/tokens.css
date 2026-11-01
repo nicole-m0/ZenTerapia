@@ -118,6 +118,8 @@
   --duration-base: 320ms;
   --duration-slow: 700ms;
   --duration-light: 1400ms;
+  /* distância da revelação na rolagem: curta, só vertical */
+  --reveal-distance: 1.25rem;
 
   /* Camadas */
   --z-header: 50;

@@ -24,7 +24,7 @@ const numerals = ['i.', 'ii.', 'iii.', 'iv.'];
 
 <section class="session surface-dark" aria-labelledby="session-title">
   <div class="container">
-    <header class="session__head">
+    <header class="session__head" data-reveal>
       <div class="session__heading">
         <SectionLabel number="03">{content.label}</SectionLabel>
         <h2 id="session-title">
@@ -43,6 +43,7 @@ const numerals = ['i.', 'ii.', 'iii.', 'iv.'];
                 src={photo.src}
                 alt={photo.alt[locale]}
                 widths={[480, 720, 960]}
+                width={960}
                 sizes="(min-width: 60rem) 34vw, 86vw"
                 formats={['avif', 'webp']}
               />
@@ -172,7 +173,10 @@ const numerals = ['i.', 'ii.', 'iii.', 'iv.'];
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .patch {
-        animation: patch-in linear both;
+        /* longhands: o minificador junta o atalho com a timeline numa declaração inválida */
+        animation-name: patch-in;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 0% entry 80%;
       }

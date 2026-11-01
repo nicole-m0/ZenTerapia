@@ -38,20 +38,22 @@ const channels = (['whatsapp', 'email', 'instagram'] as const).map((key) => ({
   <header class="contact-head">
     <div class="container contact-head__inner">
       <LightCast class="contact-head__light" motion="load" soft />
-      <p class="eyebrow">{content.head.eyebrow}</p>
+      <p class="eyebrow enter">{content.head.eyebrow}</p>
       <h1 class="contact-head__title">
-        {lines.map((line) => (
-          <span class="contact-head__line">
+        {lines.map((line, i) => (
+          <span class="contact-head__line enter" style={`--enter: ${i + 1}`}>
             <Emphasis text={line} />{' '}
           </span>
         ))}
       </h1>
-      <p class="lead contact-head__lead">{content.head.lead}</p>
+      <p class="lead contact-head__lead enter" style="--enter: 3">
+        {content.head.lead}
+      </p>
     </div>
   </header>
 
   <div class="container contact-body">
-    <div class="contact-info">
+    <div class="contact-info" data-reveal>
       <section aria-labelledby="channels-title">
         <h2 id="channels-title" class="contact-info__heading">
           {content.channels.title}
@@ -60,7 +62,7 @@ const channels = (['whatsapp', 'email', 'instagram'] as const).map((key) => ({
           {channels.map((channel) => (
             <li>
               <a
-                class="channels__link"
+                class="channels__link glass-sweep"
                 href={channel.href}
                 target={channel.external ? '_blank' : undefined}
                 rel={channel.external ? 'noopener noreferrer' : undefined}

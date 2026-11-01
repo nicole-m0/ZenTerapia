@@ -83,7 +83,10 @@ const paneCount = cols.length * rows.length;
     /* a luz da tarde caminha: desliza e deita um pouco enquanto a seção passa */
     @supports (animation-timeline: view()) {
       .light-cast--scroll {
-        animation: light-walk linear both;
+        /* longhands: o minificador junta o atalho com a timeline numa declaração inválida */
+        animation-name: light-walk;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 10% exit 90%;
       }

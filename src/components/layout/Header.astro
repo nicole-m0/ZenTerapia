@@ -54,6 +54,8 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
 
 <style>
   .site-header {
+    /* fica parado na troca de página (ver @view-transition em global.css) */
+    view-transition-name: site-header;
     position: sticky;
     top: 0;
     z-index: var(--z-header);
@@ -65,7 +67,10 @@ const desktopNav = getPrimaryNav(locale).filter((item) => item.route !== 'home')
   /* Filete inferior aparece ao rolar, só com CSS (scroll-driven animation) */
   @supports (animation-timeline: scroll()) {
     .site-header {
-      animation: header-rule linear both;
+      /* longhands: o minificador junta o atalho com a timeline numa declaração inválida */
+      animation-name: header-rule;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root);
       animation-range: 0 6rem;
     }

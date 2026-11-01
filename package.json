@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:qa": "astro build --mode qa",
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
@@ -18,7 +19,7 @@
     "format:check": "prettier --check .",
     "test": "playwright test",
     "test:install": "playwright install chromium",
-    "validate": "npm run check && npm run lint && npm run format:check && npm run build && npm run test"
+    "validate": "npm run check && npm run lint && npm run format:check && npm run build:qa && npm run test"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

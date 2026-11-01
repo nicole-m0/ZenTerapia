@@ -1,0 +1,48 @@
+{
+  "head": {
+    "eyebrow": "Legal notice",
+    "title": "First|*things* first.",
+    "lead": "This site is a portfolio piece. Here is what is fictional, how form data is handled and where the images come from.",
+    "updated": "Updated October 2026"
+  },
+  "notice": {
+    "title": "Demo project",
+    "text": "Terapia Zen does not exist. There are no real sessions, bookings or payments."
+  },
+  "indexLabel": "On this page",
+  "sections": [
+    {
+      "id": "demo",
+      "title": "What is fictional",
+      "paragraphs": [
+        "The Terapia Zen brand, the therapist Helena Prado, her background and training, the client stories, the session prices, the hours, the address and the contact details were invented to demonstrate a website for integrative therapies.",
+        "The contact details point to harmless destinations: a phone number with a non-existent area code, an email on a domain reserved for examples (.example) and a link to the Instagram home page rather than a real profile."
+      ]
+    },
+    {
+      "id": "health",
+      "title": "Health notice",
+      "paragraphs": [
+        "The descriptions of the practices are illustrative and are not health advice. Integrative practices complement, and never replace, medical or psychological care.",
+        "In an emergency, contact a health service or your local emergency number."
+      ]
+    },
+    {
+      "id": "privacy",
+      "title": "Privacy and data",
+      "paragraphs": [
+        "The contact form is for demonstration only: it checks the fields in your browser and shows a confirmation, but nothing is sent or stored.",
+        "This site uses no cookies, stores nothing in your browser and has no analytics or advertising tools. Fonts and images are served by the site itself, with no third-party services.",
+        "The WhatsApp and Instagram links lead to external services, which follow their own privacy policies."
+      ]
+    },
+    {
+      "id": "credits",
+      "title": "Images and credits",
+      "paragraphs": [
+        "The photographs are from Unsplash, used under the Unsplash License. The people and places shown have no connection to the fictional brand."
+      ]
+    }
+  ],
+  "creditsPhotoBy": "Photo by"
+}

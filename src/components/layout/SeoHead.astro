@@ -1,6 +1,6 @@
 ---
 import { defaultLocale, localeMeta, locales, type Locale, type RouteKey } from '@/i18n/config';
-import { getAlternateLinks } from '@/i18n/utils';
+import { getAlternateLinks, getLocalizedPath, useTranslations } from '@/i18n/utils';
 import { site } from '@/data/site';
 
 interface Props {
@@ -13,11 +13,26 @@ interface Props {
 }
 
 const { locale, route, title, description, noindex = false } = Astro.props;
+const t = useTranslations(locale);
 
 const fullTitle = title.includes(site.name) ? title : `${title} — ${site.name}`;
 const alternates = route ? getAlternateLinks(route, Astro.site) : [];
 const canonical = alternates.find((alt) => alt.locale === locale)?.href;
 const xDefault = alternates.find((alt) => alt.locale === defaultLocale)?.href;
+const ogImage = new URL(`/og/og-${locale}.jpg`, Astro.site ?? Astro.url).href;
+const homeUrl = new URL(getLocalizedPath('home', locale), Astro.site ?? Astro.url).href;
+
+// Dados estruturados mínimos: o site e a marca. Sem endereço, preço ou avaliação,
+// porque tudo é fictício e não deve parecer um negócio local real.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: homeUrl,
+  inLanguage: localeMeta[locale].htmlLang,
+  description: t.demo.notice,
+};
+
 const ogAlternateLocales = locales
   .filter((code) => code !== locale)
   .map((code) => localeMeta[code].ogLocale);
@@ -28,7 +43,7 @@ const ogAlternateLocales = locales
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="generator" content={Astro.generator} />
-<meta name="theme-color" content="#f4f3ee" />
+<meta name="theme-color" content="#e8e6df" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -49,3 +64,13 @@ const ogAlternateLocales = locales
   <meta property="og:locale:alternate" content={code} />
 ))}
 {canonical && <meta property="og:url" content={canonical} />}
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={t.seo.ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+{!noindex && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+<link rel="sitemap" href="/sitemap-index.xml" />

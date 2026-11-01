@@ -48,20 +48,28 @@ const numerals = ['i.', 'ii.', 'iii.'];
       </figure>
 
       <div class="about-head__text">
-        <p class="eyebrow">{content.head.eyebrow}</p>
+        <p class="eyebrow enter">{content.head.eyebrow}</p>
         <h1 class="about-head__name">
-          <span>{firstName}</span>
-          <span class="about-head__surname">{rest.join(' ')}</span>
+          <span class="enter" style="--enter: 1">
+            {firstName}
+          </span>
+          <span class="about-head__surname enter" style="--enter: 2">
+            {rest.join(' ')}
+          </span>
         </h1>
-        <p class="about-head__role">{content.head.role}</p>
-        <DemoNote>{content.head.demoNote}</DemoNote>
+        <p class="about-head__role enter" style="--enter: 3">
+          {content.head.role}
+        </p>
+        <div class="enter" style="--enter: 4">
+          <DemoNote>{content.head.demoNote}</DemoNote>
+        </div>
       </div>
     </div>
   </header>
 
   <section class="story" aria-labelledby="story-title">
     <div class="container story__inner">
-      <h2 id="story-title" class="story__statement">
+      <h2 id="story-title" class="story__statement" data-reveal>
         <Emphasis text={content.head.statement} />
       </h2>
       <div class="story__body">
@@ -75,7 +83,7 @@ const numerals = ['i.', 'ii.', 'iii.'];
 
   <section class="principles" aria-labelledby="principles-title">
     <div class="container">
-      <div class="principles__head">
+      <div class="principles__head" data-reveal>
         <SectionLabel number="01">{content.principles.label}</SectionLabel>
         <h2 id="principles-title" class="principles__title">
           <Emphasis text={content.principles.title} />
@@ -83,7 +91,7 @@ const numerals = ['i.', 'ii.', 'iii.'];
       </div>
       <ol class="principles__window" role="list">
         {content.principles.items.map((item, index) => (
-          <li class="principles__pane">
+          <li class="principles__pane" data-reveal style={`--reveal: ${index + 1}`}>
             <span class="principles__number" aria-hidden="true">
               {numerals[index]}
             </span>
@@ -98,7 +106,7 @@ const numerals = ['i.', 'ii.', 'iii.'];
 
   <section class="path surface-dark" aria-labelledby="path-title">
     <div class="container path__inner">
-      <div class="path__head">
+      <div class="path__head" data-reveal>
         <SectionLabel number="02">{content.path.label}</SectionLabel>
         <h2 id="path-title" class="path__title">
           <Emphasis text={content.path.title} />
@@ -106,8 +114,8 @@ const numerals = ['i.', 'ii.', 'iii.'];
         <DemoNote>{content.path.demoNote}</DemoNote>
       </div>
       <ol class="path__list" role="list">
-        {content.path.items.map((item) => (
-          <li class="path__item">
+        {content.path.items.map((item, index) => (
+          <li class="path__item" data-reveal style={`--reveal: ${Math.min(index, 2)}`}>
             <p class="path__year">{item.year}</p>
             <div class="path__text">
               <h3 class="path__name">{item.title}</h3>
@@ -121,7 +129,7 @@ const numerals = ['i.', 'ii.', 'iii.'];
 
   <section class="space" aria-labelledby="space-title">
     <div class="container space__inner">
-      <div class="space__head">
+      <div class="space__head" data-reveal>
         <SectionLabel number="03">{content.space.label}</SectionLabel>
         <h2 id="space-title" class="space__title">
           <Emphasis text={content.space.title} />
@@ -140,8 +148,10 @@ const numerals = ['i.', 'ii.', 'iii.'];
         />
         <figcaption class="space__caption">{content.space.caption}</figcaption>
       </figure>
-      <p class="lead space__text">{content.space.text}</p>
-      <div class="space__aside">
+      <p class="lead space__text" data-reveal>
+        {content.space.text}
+      </p>
+      <div class="space__aside" data-reveal style="--reveal: 1">
         <ul class="space__details" role="list">
           {content.space.details.map((detail) => (
             <li>{detail}</li>
@@ -352,8 +362,41 @@ const numerals = ['i.', 'ii.', 'iii.'];
     background-color: var(--color-ink-line);
   }
 
+  /*
+   * A luz percorre o montante enquanto a trajetória passa pela tela.
+   * Sem suporte a animações ligadas à rolagem, fica só o montante, como antes.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .path__list::after {
+        content: '';
+        position: absolute;
+        top: 0.5rem;
+        bottom: 0.5rem;
+        left: 0;
+        width: var(--bar);
+        background-color: color-mix(in srgb, var(--color-light) 30%, var(--color-ink-line));
+        transform-origin: top;
+        /* longhands: o minificador junta o atalho com a timeline numa declaração inválida */
+        animation-name: path-light;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 40% cover 70%;
+      }
+    }
+  }
+
+  @keyframes path-light {
+    from {
+      scale: 1 0;
+    }
+  }
+
   .path__item {
     position: relative;
+    /* os marcos ficam por cima da luz que percorre o montante */
+    z-index: 1;
     display: grid;
     gap: var(--space-2xs);
   }

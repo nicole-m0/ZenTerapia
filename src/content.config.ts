@@ -196,4 +196,32 @@ const contactPage = defineCollection({
   }),
 });
 
-export const collections = { services, testimonials, home, servicesPage, aboutPage, contactPage };
+/** Aviso legal e privacidade: seções com âncora própria (o formulário aponta para a de privacidade). */
+const legalPage = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/pages/legal' }),
+  schema: z.object({
+    head: pageHead.extend({ updated: z.string() }),
+    notice: z.object({ title: z.string(), text: z.string() }),
+    indexLabel: z.string(),
+    sections: z
+      .array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          paragraphs: z.array(z.string()).min(1),
+        }),
+      )
+      .min(1),
+    creditsPhotoBy: z.string(),
+  }),
+});
+
+export const collections = {
+  services,
+  testimonials,
+  home,
+  servicesPage,
+  aboutPage,
+  contactPage,
+  legalPage,
+};

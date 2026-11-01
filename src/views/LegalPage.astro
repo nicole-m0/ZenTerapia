@@ -1,25 +1,304 @@
 ---
+/**
+ * Aviso legal e privacidade: título na luz da parede (como em Contato), o aviso
+ * de demonstração numa vidraça escura e o texto em seções com âncora. No desktop,
+ * um índice fixo na coluna estreita; os créditos das fotos vêm do manifesto.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Emphasis from '@/components/ui/Emphasis.astro';
+import LightCast from '@/components/window/LightCast.astro';
+import { images } from '@/data/images';
 import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/utils';
+import { getLegalPageContent } from '@/lib/content';
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
-const page = useTranslations(locale).pages.legal;
+const t = useTranslations(locale);
+const page = t.pages.legal;
+const content = await getLegalPageContent(locale);
+const lines = content.head.title.split('|');
+const creditsId = content.sections.at(-1)?.id;
+
+// Uma linha por autor, mesmo que a pessoa assine mais de uma foto.
+const credits = [
+  ...new Map(Object.values(images).map((photo) => [photo.credit.url, photo.credit])).values(),
+];
 ---
 
 <BaseLayout locale={locale} route="legal" title={page.title} description={page.description}>
-  {/* Conteúdo da página nas próximas etapas. */}
-  <div class="container page-stub">
-    <h1>{page.title}</h1>
+  <header class="legal-head">
+    <div class="container legal-head__inner">
+      <LightCast class="legal-head__light" motion="load" soft />
+      <p class="eyebrow enter">{content.head.eyebrow}</p>
+      <h1 class="legal-head__title">
+        {lines.map((line, i) => (
+          <span class="legal-head__line enter" style={`--enter: ${i + 1}`}>
+            <Emphasis text={line} />{' '}
+          </span>
+        ))}
+      </h1>
+      <p class="lead legal-head__lead enter" style="--enter: 3">
+        {content.head.lead}
+      </p>
+      <p class="legal-head__updated enter" style="--enter: 4">
+        {content.head.updated}
+      </p>
+    </div>
+  </header>
+
+  <div class="container legal-body">
+    <aside class="legal-aside enter" style="--enter: 5">
+      <div class="legal-notice">
+        <p class="legal-notice__title">{content.notice.title}</p>
+        <p class="legal-notice__text">{content.notice.text}</p>
+      </div>
+      <span class="legal-notice__sill" aria-hidden="true"></span>
+
+      <nav class="legal-index" aria-label={content.indexLabel}>
+        <p class="legal-index__label" aria-hidden="true">
+          {content.indexLabel}
+        </p>
+        <ol role="list">
+          {content.sections.map((section, index) => (
+            <li>
+              <a href={`#${section.id}`}>
+                <span class="legal-index__number" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                {section.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </aside>
+
+    <div class="legal-sections">
+      {content.sections.map((section, index) => (
+        <section
+          id={section.id}
+          class="legal-section"
+          data-reveal
+          aria-labelledby={`${section.id}-title`}
+        >
+          <p class="legal-section__number" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </p>
+          <h2 id={`${section.id}-title`} class="legal-section__title">
+            {section.title}
+          </h2>
+          <div class="legal-section__text">
+            {section.paragraphs.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+            {section.id === creditsId && (
+              <ul class="credits" role="list">
+                {credits.map((credit) => (
+                  <li>
+                    {content.creditsPhotoBy}{' '}
+                    <a href={credit.url} target="_blank" rel="noopener noreferrer">
+                      {credit.author}
+                      <span class="visually-hidden"> {t.a11y.opensInNewTab}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      ))}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  .page-stub {
-    padding-block: var(--space-section);
+  /* ---------- Cabeçalho ---------- */
+
+  .legal-head {
+    overflow: clip;
+  }
+
+  .legal-head__inner {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: var(--space-m);
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  .legal-head__inner > :not(:first-child) {
+    position: relative;
+  }
+
+  .legal-head__inner :global(.legal-head__light) {
+    position: absolute;
+    top: 1rem;
+    left: 18%;
+    width: 70%;
+    height: 17rem;
+  }
+
+  .legal-head__title {
+    font-size: var(--step-hero);
+  }
+
+  .legal-head__line {
+    display: block;
+  }
+
+  .legal-head__line:nth-child(2) {
+    padding-inline-start: 0.75em;
+  }
+
+  .legal-head__lead {
+    max-width: 42ch;
+  }
+
+  .legal-head__updated {
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  /* ---------- Corpo ---------- */
+
+  .legal-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xl);
+    padding-bottom: var(--space-section);
+  }
+
+  .legal-aside {
+    display: grid;
+    align-content: start;
+  }
+
+  /* Aviso numa vidraça escura com peitoril, como as janelas do resto do site. */
+  .legal-notice {
+    display: grid;
+    gap: var(--space-2xs);
+    padding: calc(var(--space-s) + var(--bar));
+    color: var(--color-light);
+    background-color: var(--color-frame);
+  }
+
+  .legal-notice__title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .legal-notice__text {
+    font-size: var(--step--1);
+    color: var(--color-ink-muted);
+  }
+
+  .legal-notice__sill {
+    display: block;
+    height: var(--bar);
+    margin-inline: calc(var(--bar) * -1.5);
+    background-color: var(--color-frame);
+    filter: brightness(0.85);
+  }
+
+  .legal-index {
+    margin-top: var(--space-xl);
+  }
+
+  .legal-index__label {
+    margin-bottom: var(--space-s);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .legal-index ol {
+    display: grid;
+    border-top: 1px solid var(--rule);
+  }
+
+  .legal-index a {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: baseline;
+    padding-block: var(--space-xs);
+    border-bottom: 1px solid var(--rule);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .legal-index a:hover {
+    color: var(--accent);
+  }
+
+  .legal-index__number,
+  .legal-section__number {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .legal-sections {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .legal-section {
+    display: grid;
+    gap: var(--space-xs);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+  }
+
+  .legal-section__number {
+    font-size: var(--step-1);
+  }
+
+  .legal-section__title {
+    font-size: var(--step-4);
+  }
+
+  .legal-section__text {
+    display: grid;
+    gap: var(--space-s);
+    max-width: 62ch;
+    margin-top: var(--space-xs);
+  }
+
+  .credits {
+    display: grid;
+    gap: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+  }
+
+  .credits a {
+    color: var(--fg);
+  }
+
+  @media (min-width: 64em) {
+    .legal-body {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      gap: var(--space-3xl);
+    }
+
+    .legal-aside {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-l));
+      align-self: start;
+    }
+
+    .legal-sections {
+      grid-column: 2;
+    }
   }
 </style>

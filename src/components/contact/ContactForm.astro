@@ -12,7 +12,7 @@
 import Button from '@/components/ui/Button.astro';
 import DemoNote from '@/components/ui/DemoNote.astro';
 import type { Locale } from '@/i18n/config';
-import { getLocalizedPath } from '@/i18n/utils';
+import { getLocalizedPath, useTranslations } from '@/i18n/utils';
 import type { getContactPageContent, getServices } from '@/lib/content';
 
 interface Props {
@@ -25,7 +25,7 @@ const { locale, content, services } = Astro.props;
 const practiceParam = locale === 'pt' ? 'pratica' : 'practice';
 ---
 
-<div class="contact-form" data-contact-form>
+<div class="contact-form" data-contact-form data-reveal style="--reveal: 1">
   <form class="contact-form__form" novalidate data-practice-param={practiceParam}>
     <div class="contact-form__head">
       <h2 class="contact-form__title">{content.title}</h2>
@@ -134,7 +134,12 @@ const practiceParam = locale === 'pt' ? 'pratica' : 'practice';
         />
         <label for="cf-consent">
           {content.consent.before}{' '}
-          <a href={getLocalizedPath('legal', locale)}>{content.consent.link}</a>.
+          <a
+            href={`${getLocalizedPath('legal', locale)}#${useTranslations(locale).anchors.privacy}`}
+          >
+            {content.consent.link}
+          </a>
+          .
         </label>
       </div>
       <p id="cf-consent-error" class="field__error"></p>
@@ -370,6 +375,18 @@ const practiceParam = locale === 'pt' ? 'pratica' : 'practice';
   .field__error:empty,
   .contact-form__summary:empty {
     display: none;
+  }
+
+  /* erros e confirmação chegam com a mesma subida curta das entradas */
+  @media (prefers-reduced-motion: no-preference) {
+    .field__error:not(:empty),
+    .contact-form__summary:not(:empty) {
+      animation: enter-up var(--duration-base) var(--ease-out) both;
+    }
+
+    .contact-form__success:not([hidden]) {
+      animation: enter-up var(--duration-slow) var(--ease-out) both;
+    }
   }
 
   /* ---------- Escolhas ---------- */

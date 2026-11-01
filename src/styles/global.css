@@ -257,6 +257,105 @@ body::after {
   opacity: 0.09;
 }
 
+/* ---------- Movimento (Etapa 6) ---------- */
+
+/*
+ * Entrada dos cabeçalhos internos: a mesma subida curta do Hero, linha a linha.
+ * `--enter` define a ordem. Sem suporte ou com movimento reduzido, nada muda.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: enter-up 1s var(--ease-out) both;
+    animation-delay: calc(120ms + var(--enter, 0) * 110ms);
+  }
+}
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    translate: 0 0.35em;
+  }
+}
+
+/*
+ * Revelação na rolagem. O conteúdo só começa escondido quando o script do
+ * layout confirmou que vai observá-lo (classe `motion` no <html>): sem JS, com
+ * erro, com movimento reduzido ou na impressão, tudo aparece normalmente.
+ * Só opacidade e deslocamento vertical, para nunca criar overflow lateral.
+ */
+@media screen and (prefers-reduced-motion: no-preference) {
+  .motion [data-reveal] {
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      translate var(--duration-slow) var(--ease-out);
+    transition-delay: calc(var(--reveal, 0) * 90ms);
+  }
+
+  .motion [data-reveal]:not(.is-revealed) {
+    opacity: 0;
+    translate: 0 var(--reveal-distance);
+  }
+}
+
+/*
+ * Troca de página: um cross-fade curto entre documentos. O header tem nome
+ * próprio e fica parado. Navegadores sem suporte trocam de página como sempre.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-base);
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/*
+ * Vidraça clicável: no hover (só com mouse), a mesma faixa de luz do botão
+ * atravessa o vidro. O elemento precisa de `position` e `overflow: clip`.
+ */
+.glass-sweep {
+  position: relative;
+  overflow: clip;
+}
+
+.glass-sweep::after {
+  content: '';
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-light) 70%, transparent),
+    transparent
+  );
+  transform: translateX(-160%) skewX(var(--light-skew));
+  pointer-events: none;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .glass-sweep:hover::after {
+    transform: translateX(380%) skewX(var(--light-skew));
+    transition: transform var(--duration-light) var(--ease-out);
+  }
+}
+
 /* ---------- Movimento reduzido ---------- */
 
 @media (prefers-reduced-motion: reduce) {

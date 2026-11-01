@@ -46,7 +46,16 @@ for (const locale of locales) {
       );
       expect(overflow).toBeLessThanOrEqual(0);
 
-      // acessibilidade: nenhuma violação séria ou crítica
+      // acessibilidade: nenhuma violação séria ou crítica, no estado final da página
+      // (espera as entradas e revelações por tempo; as ligadas à rolagem não terminam)
+      await page.evaluate(() =>
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.timeline === document.timeline)
+            .map((a) => a.finished.catch(() => undefined)),
+        ),
+      );
       const axe = await new AxeBuilder({ page }).analyze();
       const serious = axe.violations.filter(
         (v) => v.impact === 'serious' || v.impact === 'critical',
@@ -65,4 +74,8 @@ test('404 bilíngue', async ({ page }) => {
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('section[lang="en"] h2')).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
 });

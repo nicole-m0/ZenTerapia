@@ -27,6 +27,14 @@ export const pt = {
     close: 'Fechar',
     dialogLabel: 'Menu de navegação',
   },
+  seo: {
+    ogImageAlt:
+      'Janela escura com sombra de caixilho numa parede clara, ao lado do nome Terapia Zen e da frase: o cuidado começa na pausa.',
+  },
+  anchors: {
+    /** Âncora da seção de privacidade no aviso legal (o formulário aponta para ela). */
+    privacy: 'privacidade',
+  },
   language: {
     label: 'Idioma',
   },

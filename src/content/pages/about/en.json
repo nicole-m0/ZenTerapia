@@ -37,7 +37,7 @@
       {
         "year": "2012",
         "title": "A first pause",
-        "text": "After burning out, she starts meditating with a neighbourhood group once a week."
+        "text": "After burning out, she starts meditating with a neighborhood group once a week."
       },
       {
         "year": "2015",
@@ -76,7 +76,7 @@
   },
   "closing": {
     "title": "Shall we *talk*?",
-    "text": "The first conversation is free and with no commitment. Tell us how you are, and we will see together whether it makes sense to begin.",
+    "text": "The first conversation is free, with no commitment. Tell us how you are, and we will see together whether it makes sense to begin.",
     "whatsappCta": { "label": "Chat on WhatsApp" }
   }
 }

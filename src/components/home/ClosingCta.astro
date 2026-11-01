@@ -24,11 +24,13 @@ const t = useTranslations(locale);
 <section class="closing" aria-labelledby="closing-title">
   <div class="container closing__inner">
     <LightCast class="closing__light" />
-    <h2 id="closing-title" class="closing__title">
+    <h2 id="closing-title" class="closing__title" data-reveal>
       <Emphasis text={content.title} />
     </h2>
-    <p class="closing__text">{content.text}</p>
-    <div class="closing__actions">
+    <p class="closing__text" data-reveal style="--reveal: 1">
+      {content.text}
+    </p>
+    <div class="closing__actions" data-reveal style="--reveal: 2">
       <Button href={getLocalizedPath('contact', locale)} arrow>
         {t.nav.book}
       </Button>

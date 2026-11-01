@@ -31,6 +31,23 @@ const t = useTranslations(locale);
     />
     <Font cssVariable="--font-display-family" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-body-family" preload />
+    {/*
+      Revelação na rolagem, parte 1: marca o <html> antes da pintura para os
+      blocos com data-reveal começarem escondidos. Se o observador (parte 2,
+      no fim do body) não confirmar até o DOMContentLoaded, a marca sai e tudo
+      aparece. Sem JS ou com movimento reduzido, nada é escondido.
+    */}
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        if (!('IntersectionObserver' in window)) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        root.classList.add('motion');
+        addEventListener('DOMContentLoaded', () => {
+          if (!window.__revealReady) root.classList.remove('motion');
+        });
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">
@@ -41,5 +58,23 @@ const t = useTranslations(locale);
       <slot />
     </main>
     <Footer locale={locale} route={route} />
+    {/* Revelação na rolagem, parte 2: revela cada bloco uma vez, ao entrar na tela. */}
+    <script is:inline>
+      (() => {
+        if (!document.documentElement.classList.contains('motion')) return;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+        window.__revealReady = true;
+      })();
+    </script>
   </body>
 </html>

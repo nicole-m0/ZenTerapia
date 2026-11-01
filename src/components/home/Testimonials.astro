@@ -19,7 +19,7 @@ const { content, testimonials } = Astro.props;
 
 <section class="testimonials" aria-labelledby="testimonials-title">
   <div class="container">
-    <header class="testimonials__head">
+    <header class="testimonials__head" data-reveal>
       <SectionLabel number="04">{content.label}</SectionLabel>
       <h2 id="testimonials-title">
         <Emphasis text={content.title} />
@@ -27,7 +27,7 @@ const { content, testimonials } = Astro.props;
       <DemoNote>{content.disclaimer}</DemoNote>
     </header>
 
-    <div class="testimonials__window">
+    <div class="testimonials__window" data-reveal style="--reveal: 1">
       {testimonials.map((item, index) => (
         <figure class:list={['quote', index === 0 ? 'quote--lead' : 'quote--minor']}>
           <blockquote>

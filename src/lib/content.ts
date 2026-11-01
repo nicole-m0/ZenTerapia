@@ -26,6 +26,12 @@ export async function getContactPageContent(locale: Locale) {
   return entry.data;
 }
 
+export async function getLegalPageContent(locale: Locale) {
+  const entry = await getEntry('legalPage', locale);
+  if (!entry) throw new Error(`Conteúdo do aviso legal ausente para "${locale}"`);
+  return entry.data;
+}
+
 export async function getServices(locale: Locale) {
   const entries = await getCollection('services', (entry) => entry.id.startsWith(`${locale}/`));
   return entries.map((entry) => entry.data).sort((a, b) => a.order - b.order);

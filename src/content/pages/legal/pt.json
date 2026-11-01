@@ -1,0 +1,48 @@
+{
+  "head": {
+    "eyebrow": "Aviso legal",
+    "title": "Antes de|*tudo*.",
+    "lead": "Este site é uma peça de portfólio. Aqui está o que é fictício, como os dados do formulário são tratados e de onde vêm as imagens.",
+    "updated": "Atualizado em outubro de 2026"
+  },
+  "notice": {
+    "title": "Projeto demonstrativo",
+    "text": "A Terapia Zen não existe. Não há atendimento, agendamento nem cobrança reais."
+  },
+  "indexLabel": "Nesta página",
+  "sections": [
+    {
+      "id": "demonstracao",
+      "title": "O que é fictício",
+      "paragraphs": [
+        "A marca Terapia Zen, a terapeuta Helena Prado, sua trajetória e formação, os relatos de clientes, os valores das sessões, os horários, o endereço e os contatos foram inventados para demonstrar um site de terapias integrativas.",
+        "Os contatos usam destinos inofensivos: um número com DDD inexistente, um e-mail em domínio reservado para exemplos (.example) e um link para a página inicial do Instagram, não para um perfil real."
+      ]
+    },
+    {
+      "id": "saude",
+      "title": "Aviso de saúde",
+      "paragraphs": [
+        "Os textos sobre as práticas são ilustrativos e não constituem orientação de saúde. Práticas integrativas complementam, e não substituem, o acompanhamento médico ou psicológico.",
+        "Em uma emergência, procure um serviço de saúde ou ligue para o SAMU (192)."
+      ]
+    },
+    {
+      "id": "privacidade",
+      "title": "Privacidade e dados",
+      "paragraphs": [
+        "O formulário de contato é apenas demonstrativo: ele confere os campos no seu navegador e mostra uma confirmação, mas nada é enviado nem armazenado.",
+        "O site não usa cookies, não guarda dados no seu navegador e não tem ferramentas de análise ou publicidade. Fontes e imagens são servidas pelo próprio site, sem serviços de terceiros.",
+        "Os links de WhatsApp e Instagram levam a serviços externos, que seguem as próprias políticas de privacidade."
+      ]
+    },
+    {
+      "id": "creditos",
+      "title": "Imagens e créditos",
+      "paragraphs": [
+        "As fotografias são do Unsplash, usadas sob a Unsplash License. As pessoas e os lugares retratados não têm relação com a marca fictícia."
+      ]
+    }
+  ],
+  "creditsPhotoBy": "Foto de"
+}

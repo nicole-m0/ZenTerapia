@@ -32,7 +32,7 @@ const items = services.map((service) => ({ ...service, photo: getPhoto(service.i
 
 <section class="practices" aria-labelledby="practices-title">
   <div class="container">
-    <header class="practices__head">
+    <header class="practices__head" data-reveal>
       <div class="practices__heading">
         <SectionLabel number="02">{content.label}</SectionLabel>
         <h2 id="practices-title">
@@ -42,7 +42,7 @@ const items = services.map((service) => ({ ...service, photo: getPhoto(service.i
       <p class="practices__intro">{content.intro}</p>
     </header>
 
-    <div class="practices__window" data-panes>
+    <div class="practices__window" data-panes data-reveal style="--reveal: 1">
       <ol class="practices__panes" role="list" data-panes-track>
         {items.map((item) => (
           <li class="pane">
@@ -52,6 +52,7 @@ const items = services.map((service) => ({ ...service, photo: getPhoto(service.i
                   src={item.photo.src}
                   alt=""
                   widths={[400, 640, 900]}
+                  width={900}
                   sizes="(min-width: 60rem) 24vw, (min-width: 40rem) 46vw, 76vw"
                   formats={['avif', 'webp']}
                   style={

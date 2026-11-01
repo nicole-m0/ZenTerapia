@@ -54,6 +54,7 @@ const paneCount = cols.length * rows.length;
       src={photo.src}
       alt={alt ?? photo.alt[locale]}
       widths={widths}
+      width={Math.max(...widths)}
       sizes={sizes}
       formats={['avif', 'webp']}
       loading={eager ? 'eager' : 'lazy'}
@@ -82,7 +83,8 @@ const paneCount = cols.length * rows.length;
   }
 
   .window__glass {
-    overflow: hidden;
+    /* clip, não hidden: hidden cria um contêiner de rolagem e prende a view() da foto */
+    overflow: clip;
     background-color: var(--color-sage-100);
   }
 
@@ -131,9 +133,14 @@ const paneCount = cols.length * rows.length;
 
     @supports (animation-timeline: view()) {
       .window__glass :global(img) {
+        position: relative;
         height: 112%;
-        margin-top: -6%;
-        animation: window-depth linear both;
+        /* `top` em % usa a altura do vidro (margin em % usaria a largura) */
+        top: -6%;
+        /* longhands: o minificador junta o atalho com a timeline numa declaração inválida */
+        animation-name: window-depth;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
       }
 

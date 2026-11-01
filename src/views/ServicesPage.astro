@@ -32,21 +32,23 @@ const pad = (value: number) => String(value).padStart(2, '0');
   <header class="services-head">
     <div class="container services-head__inner">
       <LightCast class="services-head__light" motion="load" cols={[1, 1, 1, 1]} rows={[1]} soft />
-      <p class="eyebrow services-head__eyebrow">{content.head.eyebrow}</p>
+      <p class="eyebrow services-head__eyebrow enter">{content.head.eyebrow}</p>
       <h1 class="services-head__title">
-        {lines.map((line) => (
-          <span class="services-head__line">
+        {lines.map((line, i) => (
+          <span class="services-head__line enter" style={`--enter: ${i + 1}`}>
             <Emphasis text={line} />{' '}
           </span>
         ))}
       </h1>
-      <p class="lead services-head__lead">{content.head.lead}</p>
+      <p class="lead services-head__lead enter" style="--enter: 3">
+        {content.head.lead}
+      </p>
 
-      <nav class="services-index" aria-label={content.head.indexLabel}>
+      <nav class="services-index enter" style="--enter: 5" aria-label={content.head.indexLabel}>
         <ol class="services-index__panes" role="list">
           {services.map((service, index) => (
             <li>
-              <a class="services-index__link" href={`#${service.anchor}`}>
+              <a class="services-index__link glass-sweep" href={`#${service.anchor}`}>
                 <span class="services-index__number" aria-hidden="true">
                   {pad(index + 1)}
                 </span>
@@ -80,13 +82,13 @@ const pad = (value: number) => String(value).padStart(2, '0');
 
   <section class="faq" aria-labelledby="faq-title">
     <div class="container faq__inner">
-      <div class="faq__heading">
+      <div class="faq__heading" data-reveal>
         <SectionLabel>{content.faq.label}</SectionLabel>
         <h2 id="faq-title" class="faq__title">
           <Emphasis text={content.faq.title} />
         </h2>
       </div>
-      <div class="faq__list">
+      <div class="faq__list" data-reveal style="--reveal: 1">
         {content.faq.items.map((item) => (
           <details class="faq__item">
             <summary class="faq__question">
@@ -266,6 +268,30 @@ const pad = (value: number) => String(value).padStart(2, '0');
     line-height: 1.2;
     cursor: pointer;
     list-style: none;
+  }
+
+  /*
+   * Abertura suave: a altura anima de 0 até o conteúdo. Só onde o navegador
+   * suporta ::details-content; nos demais, abre de uma vez, como antes.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports selector(::details-content) {
+      .faq__item {
+        interpolate-size: allow-keywords;
+      }
+
+      .faq__item::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition:
+          block-size var(--duration-base) var(--ease-out),
+          content-visibility var(--duration-base) allow-discrete;
+      }
+
+      .faq__item[open]::details-content {
+        block-size: auto;
+      }
+    }
   }
 
   .faq__question::-webkit-details-marker {

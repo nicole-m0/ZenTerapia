@@ -1,9 +1,12 @@
 ---
 /**
- * Um site estático gera um único 404.html para todos os idiomas,
- * por isso esta página traz as duas versões lado a lado.
+ * Um site estático gera um único 404.html para todos os idiomas, por isso a
+ * página traz as duas versões: cada idioma numa vidraça da mesma janela,
+ * com a luz da parede atrás do título, como nas outras páginas.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import LightCast from '@/components/window/LightCast.astro';
 import { localeMeta } from '@/i18n/config';
 import { getLocalizedPath, useTranslations } from '@/i18n/utils';
 
@@ -18,34 +21,97 @@ const en = useTranslations('en');
   description={pt.pages.notFound.description}
   noindex
 >
-  <div class="container not-found">
-    <section>
-      <h1>{pt.pages.notFound.title}</h1>
-      <p>{pt.pages.notFound.description}</p>
-      <a href={getLocalizedPath('home', 'pt')}>{pt.nav.home}</a>
-    </section>
-    <section lang={localeMeta.en.htmlLang}>
-      <h2>{en.pages.notFound.title}</h2>
-      <p>{en.pages.notFound.description}</p>
-      <a href={getLocalizedPath('home', 'en')}>{en.nav.home}</a>
-    </section>
+  <div class="not-found-wrap">
+    <div class="container not-found">
+      <LightCast class="not-found__light" motion="load" soft />
+      <p class="not-found__code enter" aria-hidden="true">
+        404
+      </p>
+
+      <div class="not-found__window enter" style="--enter: 2">
+        <section class="not-found__pane">
+          <h1 class="not-found__title">{pt.pages.notFound.title}</h1>
+          <p>{pt.pages.notFound.description}</p>
+          <Button href={getLocalizedPath('home', 'pt')} arrow>
+            {pt.nav.home}
+          </Button>
+        </section>
+        <section class="not-found__pane" lang={localeMeta.en.htmlLang}>
+          <h2 class="not-found__title">{en.pages.notFound.title}</h2>
+          <p>{en.pages.notFound.description}</p>
+          <Button href={getLocalizedPath('home', 'en')} arrow>
+            {en.nav.home}
+          </Button>
+        </section>
+      </div>
+      <span class="not-found__sill enter" style="--enter: 2" aria-hidden="true"></span>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  .not-found {
-    display: grid;
-    gap: var(--space-2xl);
-    padding-block: var(--space-section);
+  .not-found-wrap {
+    overflow: clip;
   }
 
-  .not-found section {
+  .not-found {
+    position: relative;
+    display: grid;
+    padding-block: var(--space-2xl) var(--space-section);
+  }
+
+  .not-found > :not(:first-child) {
+    position: relative;
+  }
+
+  .not-found :global(.not-found__light) {
+    position: absolute;
+    top: 1rem;
+    left: 30%;
+    width: 65%;
+    height: 16rem;
+  }
+
+  .not-found__code {
+    font-family: var(--font-display);
+    font-size: var(--step-hero);
+    font-style: italic;
+    line-height: 0.9;
+    margin-bottom: var(--space-xl);
+  }
+
+  .not-found__window {
+    display: grid;
+    gap: var(--bar);
+    padding: var(--bar);
+    background-color: var(--color-frame);
+  }
+
+  .not-found__pane {
     display: grid;
     gap: var(--space-s);
     justify-items: start;
+    align-content: start;
+    padding: var(--space-l) var(--space-m);
+    background-color: var(--color-dim);
+    box-shadow: var(--shadow-reveal);
   }
 
-  .not-found h2 {
+  .not-found__title {
     font-size: var(--step-4);
+  }
+
+  .not-found__sill {
+    display: block;
+    height: var(--bar);
+    margin-inline: calc(var(--bar) * -1.5);
+    background-color: var(--color-frame);
+    filter: brightness(0.85);
+  }
+
+  @media (min-width: 48em) {
+    .not-found__window {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>

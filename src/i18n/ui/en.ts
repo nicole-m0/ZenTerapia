@@ -24,6 +24,14 @@ export const en: Dictionary = {
     close: 'Close',
     dialogLabel: 'Navigation menu',
   },
+  seo: {
+    ogImageAlt:
+      'A dark window frame with its shadow on a pale wall, next to the name Terapia Zen and the line: care begins with a pause.',
+  },
+  anchors: {
+    /** Âncora da seção de privacidade no aviso legal (o formulário aponta para ela). */
+    privacy: 'privacy',
+  },
   language: {
     label: 'Language',
   },
